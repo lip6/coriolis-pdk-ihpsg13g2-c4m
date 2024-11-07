@@ -39,7 +39,7 @@ def _routing():
     setEnclosures(via, metal, (u(0.05), u(0.05)))
     rg.addLayerGauge(CRL.RoutingLayerGauge.create(
         metal, CRL.RoutingLayerGauge.Horizontal, CRL.RoutingLayerGauge.Default, 1, 0.0,
-        u(0.0), u(0.5), u(0.29), u(0.2), u(0.19), u(0.21),
+        u(0.0), u(0.5), u(0.29), u(0.21), u(0.19), u(0.21),
     ))
     metal = tech.getLayer('Metal3')
     via = tech.getLayer('Metal2_Via2_Metal3')
@@ -66,7 +66,7 @@ def _routing():
     setEnclosures(via, metal, (u(0.01), u(0.74)))
     rg.addLayerGauge(CRL.RoutingLayerGauge.create(
         metal, CRL.RoutingLayerGauge.Vertical, CRL.RoutingLayerGauge.Default, 4, 0.0,
-        u(0.0), u(0.65), u(0.44), u(0.2), u(0.42), u(0.21),
+        u(0.0), u(0.65), u(0.39), u(0.2), u(0.42), u(0.21),
     ))
     metal = tech.getLayer('TopMetal1')
     via = tech.getLayer('Metal5_TopVia1_TopMetal1')
@@ -108,11 +108,11 @@ def _routing():
         cfg.etesian.densityVariation = 0.05
         cfg.etesian.routingDriven = False
         cfg.etesian.latchUpDistance = u(30.0 - 1.0)
-        cfg.etesian.diodeName = 'diode_w1'
+        #cfg.etesian.diodeName = 'diode_w1'
         cfg.etesian.antennaInsertThreshold = 0.50
         cfg.etesian.tieName = None
-        cfg.etesian.antennaGateMaxWL = u(400.0)
-        cfg.etesian.antennaDiodeMaxWL = u(800.0)
+        cfg.etesian.antennaGateMaxWL = u(500.0)
+        cfg.etesian.antennaDiodeMaxWL = u(50000.0)
         cfg.etesian.feedNames = 'tie,decap_w0'
         cfg.etesian.defaultFeed = 'tie'
         cfg.etesian.cell.zero = 'zero_x1'

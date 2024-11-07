@@ -366,6 +366,27 @@ def _setup_techno():
         gds2Layer=189, gds2DataType=0,
     )
 
+    Substrate_Label = createBL( tech, 'Substrate_Label', BasicLayer.Material.info, gds2Layer=40 , gds2DataType=25 )
+    Metal1_Label    = createBL( tech, 'Metal1_Label'   , BasicLayer.Material.info, gds2Layer=8  , gds2DataType=25 )
+    Metal2_Label    = createBL( tech, 'Metal2_Label'   , BasicLayer.Material.info, gds2Layer=10 , gds2DataType=25 )
+    Metal3_Label    = createBL( tech, 'Metal3_Label'   , BasicLayer.Material.info, gds2Layer=30 , gds2DataType=25 )
+    Metal4_Label    = createBL( tech, 'Metal4_Label'   , BasicLayer.Material.info, gds2Layer=50 , gds2DataType=25 )
+    Metal5_Label    = createBL( tech, 'Metal5_Label'   , BasicLayer.Material.info, gds2Layer=67 , gds2DataType=25 )
+    TopMetal1_Label = createBL( tech, 'TopMetal1_Label', BasicLayer.Material.info, gds2Layer=126, gds2DataType=25 )
+    TopMetal2_Label = createBL( tech, 'TopMetal2_Label', BasicLayer.Material.info, gds2Layer=134, gds2DataType=25 )
+
+    # ContLayers
+    # GatePoly<>Cont<>Metal1
+    createVia(
+        tech, 'GatPoly_Via1_Metal1', 'GatPoly', 'Cont', 'Metal1',
+        u(0.16),
+    )
+    # Activ<>Cont<>Metal1
+    createVia(
+        tech, 'Activ_Via1_Metal1', 'Activ', 'Cont', 'Metal1',
+        u(0.16),
+    )
+
     # ViaLayers
     # Metal1<>Via1<>Metal2
     createVia(
@@ -504,6 +525,7 @@ def _setup_display():
     style.addDrawingStyle( group='Viewer', name='rubber'        , color=toRGB('192,0,192'  ), border=4, threshold=0.02 )
     style.addDrawingStyle( group='Viewer', name='phantom'       , color=toRGB('Seashell4'  ), border=1 )
     style.addDrawingStyle( group='Viewer', name='boundaries'    , color=toRGB('wheat1'     ), border=2, pattern='0000000000000000', threshold=0 )
+    style.addDrawingStyle( group='Viewer', name='prBoundary'    , color=toRGB('wheat1'     ), border=2, pattern='0000000000000000', threshold=0 )
     style.addDrawingStyle( group='Viewer', name='marker'        , color=toRGB('80,250,80'  ), border=1 )
     style.addDrawingStyle( group='Viewer', name='selectionDraw' , color=toRGB('White'      ), border=1 )
     style.addDrawingStyle( group='Viewer', name='selectionFill' , color=toRGB('White'      ), border=1 )
@@ -567,6 +589,17 @@ def _setup_display():
     style.addDrawingStyle(group='Blockages', name='Via4.obs', color=toRGB('Red'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
     style.addDrawingStyle(group='Blockages', name='TopVia1.obs', color=toRGB('Blue'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
     style.addDrawingStyle(group='Blockages', name='TopVia2.obs', color=toRGB('Aqua'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
+
+    # Group: Text.
+    style.addDrawingStyle( group='Text', name='TEXT'           , color=toRGB('White'    ), border=1, threshold=400.0 )
+    style.addDrawingStyle( group='Text', name='Substrate_Label', color=toRGB('Red'      ), pattern='55AA55AA55AA55AA'         , threshold=threshold )
+    style.addDrawingStyle( group='Text', name='Metal1_Label'   , color=toRGB('Blue'     ), pattern=toHexa('poids2.8'         ), threshold=threshold )
+    style.addDrawingStyle( group='Text', name='Metal2_Label'   , color=toRGB('Aqua'     ), pattern=toHexa('light_antihash0.8'), threshold=threshold )
+    style.addDrawingStyle( group='Text', name='Metal3_Label'   , color=toRGB('LightPink'), pattern=toHexa('light_antihash1.8'), threshold=threshold )
+    style.addDrawingStyle( group='Text', name='Metal4_Label'   , color=toRGB('Green'    ), pattern=toHexa('light_antihash2.8'), threshold=threshold )
+    style.addDrawingStyle( group='Text', name='Metal5_Label'   , color=toRGB('Yellow'   ), pattern='1144114411441144'         , threshold=threshold )
+    style.addDrawingStyle( group='Text', name='TopMetal1_Label', color=toRGB('Violet'   ), pattern=toHexa('poids4.8'         ), threshold=threshold )
+    style.addDrawingStyle( group='Text', name='TopMetal2_Label', color=toRGB('Red'      ), pattern=toHexa('poids4.8'         ), threshold=threshold )
 
     # Knick & Kite.
     style.addDrawingStyle( group='Knik & Kite', name='SPL1'           , color=toRGB('Red'        ) )
