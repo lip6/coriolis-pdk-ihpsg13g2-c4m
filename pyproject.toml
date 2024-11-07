@@ -4,12 +4,12 @@ build-backend = "mesonpy"
 requires = ["meson-python"]
 
 [project]
-name = "c4m-ihpsg13s2-pdk"
+name = "c4m-ihpsg13g2-pdk"
 version = "2024.10.15"
 authors = [ { name="Jean-Paul Chaput", email="Jean-Paul.Chaput@lip6.fr" }
           , { name="Staf Verhaegen"  , email="staf@fibraservi.eu" }
           ]
-description = "PDK for IHP SG13S2 process node (130nm)"
+description = "PDK for IHP SG13G2 process node (130nm)"
 readme = "README.rst"
 license = { text="GPL-2.0-or-later" }
 keywords = [ "vlsi", "pdk" ]
