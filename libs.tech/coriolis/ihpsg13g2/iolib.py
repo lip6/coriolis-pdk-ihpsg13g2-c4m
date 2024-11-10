@@ -64,17 +64,22 @@ def _loadIoLib ( pdkDir ):
     """
     Load the I/O cells from the LEF+GDS files.
     """
-    cellsDir = pdkDir / 'libs.ref' / 'sg13g2_io'
-    af       = AllianceFramework.get()
-    db       = DataBase.getDB()
-    tech     = db.getTechnology()
-    rootlib  = db.getRootLibrary()
-    ioLib    = Library.create( rootlib, 'iolib' )
-    ioLibGds = Library.create( ioLib  , 'GDS'   )
+    cellsDir  = pdkDir / 'libs.ref' / 'sg13g2_io'
+    bondDir   = pdkDir / 'libs.ref' / 'sg13g2_pr'
+    af        = AllianceFramework.get()
+    db        = DataBase.getDB()
+    tech      = db.getTechnology()
+    rootlib   = db.getRootLibrary()
+    ioLib     = Library.create( rootlib, 'iolib'   )
+    ioLibGds  = Library.create( ioLib  , 'GDS'     )
+    ioLibBond = Library.create( ioLib  , 'GDSBond' )
     LefImport.setMergeLibrary( ioLib )
     LefImport.setGdsForeignLibrary( ioLibGds )
     Gds.load( ioLibGds
             , (cellsDir / 'gds' / 'sg13g2_io.gds').as_posix()
+            , Gds.Layer_0_IsBoundary|Gds.NoBlockages )
+    Gds.load( ioLibBond
+            , (bondDir / 'gds' / 'sg13g2_pr.gds').as_posix()
             , Gds.Layer_0_IsBoundary|Gds.NoBlockages )
     LefImport.load( (pdkDir / 'libs.ref'
                             / 'sg13g2_stdcell'
@@ -84,7 +89,8 @@ def _loadIoLib ( pdkDir ):
     LefImport.load(  (cellsDir / 'lef' / 'sg13g2_io.lef').as_posix() )
     for cell in ioLib.getCells():
         shiftAbTo00( cell )
-    af.wrapLibrary( ioLib   , 1 ) 
+    af.wrapLibrary( ioLib    , 1 ) 
+    af.wrapLibrary( ioLibBond, 2 ) 
 
 
 def setup ( pdkDir ):
