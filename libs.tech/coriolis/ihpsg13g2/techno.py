@@ -134,7 +134,7 @@ analogTechnologyTable = (
     ('minSpacing', 'SalBlock', 'Cont', 0.2, Length|Asymmetric, ''),
     ('minSpacing', 'Activ', 'GatPoly', 0.07, Length|Asymmetric, ''),
     ('minSpacing', 'Cont', 'Activ', 0.14, Length|Asymmetric, ''),
-    ('minSpacing', 'NWell', 'Activ', 0.24, Length|Asymmetric, ''),
+    #('minSpacing', 'NWell', 'Activ', 0.24, Length|Asymmetric, ''),
 )
 
 def _setup_techno():
@@ -144,7 +144,7 @@ def _setup_techno():
     tech = Technology.create(db, 'IHPSG13G2')
 
     DbU.setPrecision(2)
-    DbU.setPhysicalsPerGrid(0.005, DbU.UnitPowerMicro)
+    DbU.setPhysicalsPerGrid(0.001, DbU.UnitPowerMicro)
     with CfgCache(priority=Cfg.Parameter.Priority.ConfigurationFile) as cfg:
         cfg.gdsDriver.metricDbu = 1e-09
         cfg.gdsDriver.dbuPerUu = 0.001
@@ -158,6 +158,22 @@ def _setup_techno():
         size=u(0.62), spacing=u(0.62), gds2Layer=31, gds2DataType=0,
     )
     createBL(
+        tech, 'NWell.pin', BasicLayer.Material.nWell,
+        gds2Layer=31, gds2DataType=2,
+    )
+    createBL(
+        tech, 'PWell.block', BasicLayer.Material.pWell,
+        size=u(0.62), spacing=u(0.62), gds2Layer=46, gds2DataType=21,
+    )
+    createBL(
+        tech, 'nSD', BasicLayer.Material.nImplant,
+        size=u(0.31), spacing=u(0.31), area=0.25, gds2Layer=7, gds2DataType=0,
+    )
+    createBL(
+        tech, 'nSD.block', BasicLayer.Material.nImplant,
+        size=u(0.31), spacing=u(0.31), area=0.25, gds2Layer=7, gds2DataType=21,
+    )
+    createBL(
         tech, 'pSD', BasicLayer.Material.pImplant,
         size=u(0.31), spacing=u(0.31), area=0.25, gds2Layer=14, gds2DataType=0,
     )
@@ -165,170 +181,255 @@ def _setup_techno():
         tech, 'ThickGateOx', BasicLayer.Material.other,
         gds2Layer=44, gds2DataType=0,
     )
+
+    createBL(
+        tech, 'GatPoly', BasicLayer.Material.poly,
+        size=u(0.13), spacing=u(0.18), area=0.09, gds2Layer=5, gds2DataType=0,
+    )
     createBL(
         tech, 'GatPoly.pin', BasicLayer.Material.other,
         gds2Layer=5, gds2DataType=2,
     )
     createBL(
-        tech, 'GatPoly.obs', BasicLayer.Material.blockage,
-        gds2Layer=5, gds2DataType=100,
+        tech, 'GatPoly.nofill', BasicLayer.Material.blockage,
+        gds2Layer=5, gds2DataType=23,
+    )
+
+    createBL(
+        tech, 'Activ', BasicLayer.Material.active,
+        size=u(0.15), spacing=u(0.21), area=0.122, gds2Layer=1, gds2DataType=0,
     )
     createBL(
         tech, 'Activ.pin', BasicLayer.Material.other,
         gds2Layer=1, gds2DataType=2,
     )
     createBL(
-        tech, 'Activ.obs', BasicLayer.Material.blockage,
-        gds2Layer=1, gds2DataType=100,
+        tech, 'Activ.mask', BasicLayer.Material.other,
+        gds2Layer=1, gds2DataType=20,
+    )
+    createBL(
+        tech, 'Activ.nofill', BasicLayer.Material.blockage,
+        gds2Layer=1, gds2DataType=23,
+    )
+    createBL(
+        tech, 'Activ.noqrc', BasicLayer.Material.other,
+        gds2Layer=1, gds2DataType=28,
+    )
+
+    createBL(
+        tech, 'Cont', BasicLayer.Material.cut,
+        size=u(0.16), spacing=u(0.18), gds2Layer=6, gds2DataType=0,
+    )
+    createBL(
+        tech, 'Cont.nofill', BasicLayer.Material.blockage,
+        size=u(0.16), spacing=u(0.18), gds2Layer=6, gds2DataType=23,
+    )
+
+    createBL(
+        tech, 'Metal1', BasicLayer.Material.metal,
+        size=u(0.16), spacing=u(0.18), area=0.09, gds2Layer=8, gds2DataType=0,
     )
     createBL(
         tech, 'Metal1.pin', BasicLayer.Material.other,
         gds2Layer=8, gds2DataType=2,
     )
     createBL(
-        tech, 'Metal1.obs', BasicLayer.Material.blockage,
-        gds2Layer=8, gds2DataType=100,
+        tech, 'Metal1.filler', BasicLayer.Material.blockage,
+        gds2Layer=8, gds2DataType=22,
+    )
+    createBL(
+        tech, 'Metal1.nofill', BasicLayer.Material.blockage,
+        gds2Layer=8, gds2DataType=23,
+    )
+    createBL(
+        tech, 'Metal1.res', BasicLayer.Material.other,
+        gds2Layer=8, gds2DataType=29,
+    )
+    createBL(
+        tech, 'Metal1_iprobe', BasicLayer.Material.other,
+        size=u(0.16), spacing=u(0.18), area=0.09, gds2Layer=8, gds2DataType=33,
+    )
+    createBL(
+        tech, 'Metal1_diffprb', BasicLayer.Material.other,
+        size=u(0.16), spacing=u(0.18), area=0.09, gds2Layer=8, gds2DataType=34,
+    )
+    createBL(
+        tech, 'Metal1.noqrc', BasicLayer.Material.blockage,
+        gds2Layer=8, gds2DataType=28,
+    )
+
+    createBL(
+        tech, 'Via1', BasicLayer.Material.cut,
+        size=u(0.19), spacing=u(0.22), gds2Layer=19, gds2DataType=0,
+    )
+    createBL(
+        tech, 'Via1.nofill', BasicLayer.Material.blockage,
+        size=u(0.19), spacing=u(0.22), gds2Layer=19, gds2DataType=23,
+    )
+
+    createBL(
+        tech, 'Metal2', BasicLayer.Material.metal,
+        size=u(0.2), spacing=u(0.21), area=0.144, gds2Layer=10, gds2DataType=0,
     )
     createBL(
         tech, 'Metal2.pin', BasicLayer.Material.other,
         gds2Layer=10, gds2DataType=2,
     )
     createBL(
-        tech, 'Metal2.obs', BasicLayer.Material.blockage,
-        gds2Layer=10, gds2DataType=100,
+        tech, 'Metal2.filler', BasicLayer.Material.other,
+        gds2Layer=10, gds2DataType=22,
+    )
+    createBL(
+        tech, 'Metal2.nofill', BasicLayer.Material.blockage,
+        gds2Layer=10, gds2DataType=23,
+    )
+    createBL(
+        tech, 'Metal2.noqrc', BasicLayer.Material.blockage,
+        gds2Layer=10, gds2DataType=28,
+    )
+
+    createBL(
+        tech, 'Via2', BasicLayer.Material.cut,
+        size=u(0.19), spacing=u(0.22), gds2Layer=29, gds2DataType=0
+    )
+    createBL(
+        tech, 'Via2.nofill', BasicLayer.Material.blockage,
+        size=u(0.19), spacing=u(0.22), gds2Layer=29, gds2DataType=0
+    )
+
+    createBL(
+        tech, 'Metal3', BasicLayer.Material.metal,
+        size=u(0.2), spacing=u(0.21), area=0.144, gds2Layer=30, gds2DataType=0,
     )
     createBL(
         tech, 'Metal3.pin', BasicLayer.Material.other,
-        gds2Layer=30, gds2DataType=2,
+        gds2Layer=30, gds2DataType=2
     )
     createBL(
-        tech, 'Metal3.obs', BasicLayer.Material.blockage,
-        gds2Layer=30, gds2DataType=100,
+        tech, 'Metal3.noqrc', BasicLayer.Material.blockage,
+        gds2Layer=30, gds2DataType=28,
+    )
+    createBL(
+        tech, 'Metal3.filler', BasicLayer.Material.blockage,
+        gds2Layer=30, gds2DataType=22,
+    )
+    createBL(
+        tech, 'Metal3.nofill', BasicLayer.Material.blockage,
+        gds2Layer=30, gds2DataType=23,
+    )
+
+    createBL(
+        tech, 'Via3', BasicLayer.Material.cut,
+        size=u(0.19), spacing=u(0.22), gds2Layer=49, gds2DataType=0,
+    )
+    createBL(
+        tech, 'Via3.nofill', BasicLayer.Material.blockage,
+        size=u(0.19), spacing=u(0.22), gds2Layer=49, gds2DataType=23,
+    )
+
+    createBL(
+        tech, 'Metal4', BasicLayer.Material.metal,
+        size=u(0.2), spacing=u(0.21), area=0.144, gds2Layer=50, gds2DataType=0,
     )
     createBL(
         tech, 'Metal4.pin', BasicLayer.Material.other,
         gds2Layer=50, gds2DataType=2,
     )
     createBL(
-        tech, 'Metal4.obs', BasicLayer.Material.blockage,
-        gds2Layer=50, gds2DataType=100,
+        tech, 'Metal4.filler', BasicLayer.Material.other,
+        gds2Layer=50, gds2DataType=22,
+    )
+    createBL(
+        tech, 'Metal4.nofill', BasicLayer.Material.blockage,
+        gds2Layer=50, gds2DataType=23,
+    )
+    createBL(
+        tech, 'Metal4.noqrc', BasicLayer.Material.blockage,
+        gds2Layer=50, gds2DataType=28,
+    )
+
+    createBL(
+        tech, 'Via4', BasicLayer.Material.cut,
+        size=u(0.19), spacing=u(0.22), gds2Layer=66, gds2DataType=0,
+    )
+    createBL(
+        tech, 'Via4.nofill', BasicLayer.Material.blockage,
+        size=u(0.19), spacing=u(0.22), gds2Layer=66, gds2DataType=23,
+    )
+
+    createBL(
+        tech, 'Metal5', BasicLayer.Material.metal,
+        size=u(0.2), spacing=u(0.21), area=0.144, gds2Layer=67, gds2DataType=0,
     )
     createBL(
         tech, 'Metal5.pin', BasicLayer.Material.other,
         gds2Layer=67, gds2DataType=2,
     )
     createBL(
-        tech, 'Metal5.obs', BasicLayer.Material.blockage,
-        gds2Layer=67, gds2DataType=100,
+        tech, 'Metal5.filler', BasicLayer.Material.other,
+        gds2Layer=67, gds2DataType=2,
+    )
+    createBL(
+        tech, 'Metal5.nofill', BasicLayer.Material.blockage,
+        gds2Layer=67, gds2DataType=23,
+    )
+    createBL(
+        tech, 'Metal5.noqrc', BasicLayer.Material.blockage,
+        gds2Layer=67, gds2DataType=28,
+    )
+
+    createBL(
+        tech, 'TopVia1', BasicLayer.Material.cut,
+        size=u(0.42), spacing=u(0.42), gds2Layer=125, gds2DataType=0,
+    )
+    createBL(
+        tech, 'TopVia1.nofill', BasicLayer.Material.blockage,
+        size=u(0.42), spacing=u(0.42), gds2Layer=125, gds2DataType=23,
+    )
+
+    createBL(
+        tech, 'TopMetal1', BasicLayer.Material.metal,
+        size=u(1.64), spacing=u(1.64), gds2Layer=126, gds2DataType=0,
     )
     createBL(
         tech, 'TopMetal1.pin', BasicLayer.Material.other,
         gds2Layer=126, gds2DataType=2,
     )
     createBL(
-        tech, 'TopMetal1.obs', BasicLayer.Material.blockage,
-        gds2Layer=126, gds2DataType=100,
+        tech, 'TopMetal1.nofill', BasicLayer.Material.blockage,
+        gds2Layer=126, gds2DataType=23,
+    )
+    createBL(
+        tech, 'TopMetal1.noqrc', BasicLayer.Material.blockage,
+        gds2Layer=126, gds2DataType=28,
+    )
+
+    createBL(
+        tech, 'TopVia2', BasicLayer.Material.cut,
+        size=u(0.9), spacing=u(1.06), gds2Layer=133, gds2DataType=0,
+    )
+    createBL(
+        tech, 'TopVia2.nofill', BasicLayer.Material.blockage,
+        size=u(0.9), spacing=u(1.06), gds2Layer=133, gds2DataType=23,
+    )
+
+    createBL(
+        tech, 'TopMetal2', BasicLayer.Material.metal,
+        size=u(2.0), spacing=u(2.0), gds2Layer=134, gds2DataType=0,
     )
     createBL(
         tech, 'TopMetal2.pin', BasicLayer.Material.other,
         gds2Layer=134, gds2DataType=2,
     )
     createBL(
-        tech, 'TopMetal2.obs', BasicLayer.Material.blockage,
-        gds2Layer=134, gds2DataType=100,
+        tech, 'TopMetal2.nofill', BasicLayer.Material.blockage,
+        gds2Layer=134, gds2DataType=23,
     )
-    createBL(
-        tech, 'Cont.obs', BasicLayer.Material.blockage,
-        gds2Layer=6, gds2DataType=100,
-    )
-    createBL(
-        tech, 'Via1.obs', BasicLayer.Material.blockage,
-        gds2Layer=19, gds2DataType=100,
-    )
-    createBL(
-        tech, 'Via2.obs', BasicLayer.Material.blockage,
-        gds2Layer=29, gds2DataType=100,
-    )
-    createBL(
-        tech, 'Via3.obs', BasicLayer.Material.blockage,
-        gds2Layer=49, gds2DataType=100,
-    )
-    createBL(
-        tech, 'Via4.obs', BasicLayer.Material.blockage,
-        gds2Layer=66, gds2DataType=100,
-    )
-    createBL(
-        tech, 'TopVia1.obs', BasicLayer.Material.blockage,
-        gds2Layer=125, gds2DataType=100,
-    )
-    createBL(
-        tech, 'TopVia2.obs', BasicLayer.Material.blockage,
-        gds2Layer=133, gds2DataType=100,
-    )
-    createBL(
-        tech, 'Activ', BasicLayer.Material.active,
-        size=u(0.15), spacing=u(0.21), area=0.122, gds2Layer=1, gds2DataType=0,
-    )
-    createBL(
-        tech, 'GatPoly', BasicLayer.Material.poly,
-        size=u(0.13), spacing=u(0.18), area=0.09, gds2Layer=5, gds2DataType=0,
-    )
-    createBL(
-        tech, 'Cont', BasicLayer.Material.cut,
-        size=u(0.16), spacing=u(0.18), gds2Layer=6, gds2DataType=0,
-    )
-    createBL(
-        tech, 'Metal1', BasicLayer.Material.metal,
-        size=u(0.16), spacing=u(0.18), area=0.09, gds2Layer=8, gds2DataType=0,
-    )
-    createBL(
-        tech, 'Via1', BasicLayer.Material.cut,
-        size=u(0.19), spacing=u(0.22), gds2Layer=19, gds2DataType=0,
-    )
-    createBL(
-        tech, 'Metal2', BasicLayer.Material.metal,
-        size=u(0.2), spacing=u(0.21), area=0.144, gds2Layer=10, gds2DataType=0,
-    )
-    createBL(
-        tech, 'Via2', BasicLayer.Material.cut,
-        size=u(0.19), spacing=u(0.22), gds2Layer=29, gds2DataType=0,
-    )
-    createBL(
-        tech, 'Metal3', BasicLayer.Material.metal,
-        size=u(0.2), spacing=u(0.21), area=0.144, gds2Layer=30, gds2DataType=0,
-    )
-    createBL(
-        tech, 'Via3', BasicLayer.Material.cut,
-        size=u(0.19), spacing=u(0.22), gds2Layer=49, gds2DataType=0,
-    )
-    createBL(
-        tech, 'Metal4', BasicLayer.Material.metal,
-        size=u(0.2), spacing=u(0.21), area=0.144, gds2Layer=50, gds2DataType=0,
-    )
-    createBL(
-        tech, 'Via4', BasicLayer.Material.cut,
-        size=u(0.19), spacing=u(0.22), gds2Layer=66, gds2DataType=0,
-    )
-    createBL(
-        tech, 'Metal5', BasicLayer.Material.metal,
-        size=u(0.2), spacing=u(0.21), area=0.144, gds2Layer=67, gds2DataType=0,
-    )
-    createBL(
-        tech, 'TopVia1', BasicLayer.Material.cut,
-        size=u(0.42), spacing=u(0.42), gds2Layer=125, gds2DataType=0,
-    )
-    createBL(
-        tech, 'TopMetal1', BasicLayer.Material.metal,
-        size=u(1.64), spacing=u(1.64), gds2Layer=126, gds2DataType=0,
-    )
-    createBL(
-        tech, 'TopVia2', BasicLayer.Material.cut,
-        size=u(0.9), spacing=u(1.06), gds2Layer=133, gds2DataType=0,
-    )
-    createBL(
-        tech, 'TopMetal2', BasicLayer.Material.metal,
-        size=u(2.0), spacing=u(2.0), gds2Layer=134, gds2DataType=0,
-    )
+
+
+    # Out of order from substrate distance
+    # ====================================
+
     createBL(
         tech, 'Substrate', BasicLayer.Material.other,
         gds2Layer=40, gds2DataType=0,
@@ -342,12 +443,44 @@ def _setup_techno():
         size=u(0.31), spacing=u(0.31), gds2Layer=111, gds2DataType=0,
     )
     createBL(
+        tech, 'RES', BasicLayer.Material.other,
+        gds2Layer=24, gds2DataType=0,
+    )
+    createBL(
+        tech, 'TRANS', BasicLayer.Material.other,
+        gds2Layer=26, gds2DataType=0,
+    )
+    createBL(
+        tech, 'IND', BasicLayer.Material.other,
+        gds2Layer=27, gds2DataType=0,
+    )
+    createBL(
+        tech, 'IND.pin', BasicLayer.Material.other,
+        gds2Layer=27, gds2DataType=2,
+    )
+    createBL(
+        tech, 'IND.datatype_4', BasicLayer.Material.other,
+        gds2Layer=27, gds2DataType=4,
+    )
+    createBL(
+        tech, 'IND.text', BasicLayer.Material.other,
+        gds2Layer=27, gds2DataType=25,
+    )
+    createBL(
         tech, 'SalBlock', BasicLayer.Material.other,
         gds2Layer=28, gds2DataType=0,
     )
     createBL(
-        tech, 'RES', BasicLayer.Material.other,
-        gds2Layer=24, gds2DataType=0,
+        tech, 'nBuLay', BasicLayer.Material.other,
+        gds2Layer=32, gds2DataType=0,
+    )
+    createBL(
+        tech, 'EmWind', BasicLayer.Material.other,
+        gds2Layer=33, gds2DataType=0,
+    )
+    createBL(
+        tech, 'MIM', BasicLayer.Material.other,
+        gds2Layer=36, gds2DataType=0,
     )
     createBL(
         tech, 'Recog.dio', BasicLayer.Material.other,
@@ -358,8 +491,72 @@ def _setup_techno():
         gds2Layer=99, gds2DataType=30,
     )
     createBL(
+        tech, 'HeatTrans', BasicLayer.Material.other,
+        gds2Layer=51, gds2DataType=0,
+    )
+    createBL(
+        tech, 'HeatRes', BasicLayer.Material.other,
+        gds2Layer=52, gds2DataType=0,
+    )
+    createBL(
+        tech, 'MemCap', BasicLayer.Material.other,
+        gds2Layer=69, gds2DataType=0,
+    )
+    createBL(
+        tech, 'PolyRes', BasicLayer.Material.other,
+        gds2Layer=128, gds2DataType=0,
+    )
+    createBL(
+        tech, 'EmWiHV', BasicLayer.Material.other,
+        gds2Layer=156, gds2DataType=0,
+    )
+    createBL(
+        tech, 'Vmim', BasicLayer.Material.other,
+        gds2Layer=129, gds2DataType=0,
+    )
+    createBL(
+        tech, 'NoRCX', BasicLayer.Material.other,
+        gds2Layer=148, gds2DataType=0,
+    )
+    createBL(
+        tech, 'DeepVia', BasicLayer.Material.other,
+        gds2Layer=152, gds2DataType=0,
+    )
+    createBL(
+        tech, 'gds236.datatype_0', BasicLayer.Material.other,
+        gds2Layer=236, gds2DataType=0,
+    )
+    createBL(
+        tech, 'gds236.datatype_1', BasicLayer.Material.other,
+        gds2Layer=236, gds2DataType=1,
+    )
+    createBL(
+        tech, 'EdgeSeal.datatype_0', BasicLayer.Material.other,
+        gds2Layer=39, gds2DataType=0,
+    )
+    createBL(
+        tech, 'EdgeSeal.datatype_4', BasicLayer.Material.other,
+        gds2Layer=39, gds2DataType=4,
+    )
+    createBL(
+        tech, 'dfpad', BasicLayer.Material.other,
+        gds2Layer=41, gds2DataType=0,
+    )
+    createBL(
+        tech, 'dfpad.pillar', BasicLayer.Material.other,
+        gds2Layer=41, gds2DataType=35,
+    )
+    createBL(
         tech, 'TEXT', BasicLayer.Material.other,
         gds2Layer=63, gds2DataType=0,
+    )
+    createBL(
+        tech, 'Recog', BasicLayer.Material.other,
+        gds2Layer=99, gds2DataType=0,
+    )
+    createBL(
+        tech, 'Recog.tsv', BasicLayer.Material.other,
+        gds2Layer=99, gds2DataType=32,
     )
     createBL(
         tech, 'prBoundary', BasicLayer.Material.other,
@@ -420,54 +617,22 @@ def _setup_techno():
     )
 
     # Blockages
-    tech.getLayer('GatPoly').setBlockageLayer(
-        tech.getLayer('GatPoly.obs')
-    )
-    tech.getLayer('Activ').setBlockageLayer(
-        tech.getLayer('Activ.obs')
-    )
-    tech.getLayer('Metal1').setBlockageLayer(
-        tech.getLayer('Metal1.obs')
-    )
-    tech.getLayer('Metal2').setBlockageLayer(
-        tech.getLayer('Metal2.obs')
-    )
-    tech.getLayer('Metal3').setBlockageLayer(
-        tech.getLayer('Metal3.obs')
-    )
-    tech.getLayer('Metal4').setBlockageLayer(
-        tech.getLayer('Metal4.obs')
-    )
-    tech.getLayer('Metal5').setBlockageLayer(
-        tech.getLayer('Metal5.obs')
-    )
-    tech.getLayer('TopMetal1').setBlockageLayer(
-        tech.getLayer('TopMetal1.obs')
-    )
-    tech.getLayer('TopMetal2').setBlockageLayer(
-        tech.getLayer('TopMetal2.obs')
-    )
-    tech.getLayer('Cont').setBlockageLayer(
-        tech.getLayer('Cont.obs')
-    )
-    tech.getLayer('Via1').setBlockageLayer(
-        tech.getLayer('Via1.obs')
-    )
-    tech.getLayer('Via2').setBlockageLayer(
-        tech.getLayer('Via2.obs')
-    )
-    tech.getLayer('Via3').setBlockageLayer(
-        tech.getLayer('Via3.obs')
-    )
-    tech.getLayer('Via4').setBlockageLayer(
-        tech.getLayer('Via4.obs')
-    )
-    tech.getLayer('TopVia1').setBlockageLayer(
-        tech.getLayer('TopVia1.obs')
-    )
-    tech.getLayer('TopVia2').setBlockageLayer(
-        tech.getLayer('TopVia2.obs')
-    )
+    tech.getLayer('GatPoly'  ).setBlockageLayer( tech.getLayer('GatPoly.nofill') )
+    tech.getLayer('Activ'    ).setBlockageLayer( tech.getLayer('Activ.nofill') )
+    tech.getLayer('Metal1'   ).setBlockageLayer( tech.getLayer('Metal1.nofill') )
+    tech.getLayer('Metal2'   ).setBlockageLayer( tech.getLayer('Metal2.nofill') )
+    tech.getLayer('Metal3'   ).setBlockageLayer( tech.getLayer('Metal3.nofill') )
+    tech.getLayer('Metal4'   ).setBlockageLayer( tech.getLayer('Metal4.nofill') )
+    tech.getLayer('Metal5'   ).setBlockageLayer( tech.getLayer('Metal5.nofill') )
+    tech.getLayer('TopMetal1').setBlockageLayer( tech.getLayer('TopMetal1.nofill') )
+    tech.getLayer('TopMetal2').setBlockageLayer( tech.getLayer('TopMetal2.nofill') )
+    tech.getLayer('Cont'     ).setBlockageLayer( tech.getLayer('Cont.nofill') )
+    tech.getLayer('Via1'     ).setBlockageLayer( tech.getLayer('Via1.nofill') )
+    tech.getLayer('Via2'     ).setBlockageLayer( tech.getLayer('Via2.nofill') )
+    tech.getLayer('Via3'     ).setBlockageLayer( tech.getLayer('Via3.nofill') )
+    tech.getLayer('Via4'     ).setBlockageLayer( tech.getLayer('Via4.nofill') )
+    tech.getLayer('TopVia1'  ).setBlockageLayer( tech.getLayer('TopVia1.nofill') )
+    tech.getLayer('TopVia2'  ).setBlockageLayer( tech.getLayer('TopVia2.nofill') )
 
     # Coriolis internal layers
     createBL(
@@ -563,32 +728,49 @@ def _setup_display():
     style.addDrawingStyle(group='Routing Layers', name='TopMetal2.pin', color=toRGB('Red'), pattern=toHexa('poids4.8'), border=2, threshold=threshold)
 
     # Cuts (VIA holes).
-    style.addDrawingStyle(group='Cuts (VIA holes', name='Cont', color=toRGB('0,150,150'), threshold=threshold)
-    style.addDrawingStyle(group='Cuts (VIA holes', name='Via1', color=toRGB('Aqua'), threshold=threshold)
-    style.addDrawingStyle(group='Cuts (VIA holes', name='Via2', color=toRGB('LightPink'), threshold=threshold)
-    style.addDrawingStyle(group='Cuts (VIA holes', name='Via3', color=toRGB('Green'), threshold=threshold)
-    style.addDrawingStyle(group='Cuts (VIA holes', name='Via4', color=toRGB('Yellow'), threshold=threshold)
-    style.addDrawingStyle(group='Cuts (VIA holes', name='TopVia1', color=toRGB('Violet'), threshold=threshold)
-    style.addDrawingStyle(group='Cuts (VIA holes', name='TopVia2', color=toRGB('Red'), threshold=threshold)
-    style.addDrawingStyle(group='Cuts (VIA holes', name='Passiv', color=toRGB('Blue'), threshold=threshold)
+    style.addDrawingStyle(group='Cuts (VIA holes)', name='Cont', color=toRGB('0,150,150'), threshold=threshold)
+    style.addDrawingStyle(group='Cuts (VIA holes)', name='Via1', color=toRGB('Aqua'), threshold=threshold)
+    style.addDrawingStyle(group='Cuts (VIA holes)', name='Via2', color=toRGB('LightPink'), threshold=threshold)
+    style.addDrawingStyle(group='Cuts (VIA holes)', name='Via3', color=toRGB('Green'), threshold=threshold)
+    style.addDrawingStyle(group='Cuts (VIA holes)', name='Via4', color=toRGB('Yellow'), threshold=threshold)
+    style.addDrawingStyle(group='Cuts (VIA holes)', name='TopVia1', color=toRGB('Violet'), threshold=threshold)
+    style.addDrawingStyle(group='Cuts (VIA holes)', name='TopVia2', color=toRGB('Red'), threshold=threshold)
+    style.addDrawingStyle(group='Cuts (VIA holes)', name='Passiv', color=toRGB('Blue'), threshold=threshold)
+
+    # Filler Layers.
+    style.addDrawingStyle(group='Filler Layers', name='Metal1.filler', color=toRGB('Blue'), pattern=toHexa('slash.8'), border=2, threshold=threshold)
+    style.addDrawingStyle(group='Filler Layers', name='Metal2.filler', color=toRGB('Aqua'), pattern=toHexa('poids4.8'), border=2, threshold=threshold)
+    style.addDrawingStyle(group='Filler Layers', name='Metal3.filler', color=toRGB('LightPink'), pattern=toHexa('poids4.8'), border=2, threshold=threshold)
+    style.addDrawingStyle(group='Filler Layers', name='Metal4.filler', color=toRGB('Green'), pattern=toHexa('poids4.8'), border=2, threshold=threshold)
+    style.addDrawingStyle(group='Filler Layers', name='Metal5.filler', color=toRGB('Yellow'), pattern=toHexa('poids4.8'), border=2, threshold=threshold)
+    style.addDrawingStyle(group='Filler Layers', name='TopMetal1.filler', color=toRGB('Violet'), pattern=toHexa('poids4.8'), border=2, threshold=threshold)
+    style.addDrawingStyle(group='Filler Layers', name='TopMetal2.filler', color=toRGB('Red'), pattern=toHexa('poids4.8'), border=2, threshold=threshold)
+    style.addDrawingStyle(group='Filler Layers', name='Cont.filler', color=toRGB('0,150,150'), threshold=threshold)
+    style.addDrawingStyle(group='Filler Layers', name='Via1.filler', color=toRGB('Aqua'), threshold=threshold)
+    style.addDrawingStyle(group='Filler Layers', name='Via2.filler', color=toRGB('LightPink'), threshold=threshold)
+    style.addDrawingStyle(group='Filler Layers', name='Via3.filler', color=toRGB('Green'), threshold=threshold)
+    style.addDrawingStyle(group='Filler Layers', name='Via4.filler', color=toRGB('Yellow'), threshold=threshold)
+    style.addDrawingStyle(group='Filler Layers', name='TopVia1.filler', color=toRGB('Violet'), threshold=threshold)
+    style.addDrawingStyle(group='Filler Layers', name='TopVia2.filler', color=toRGB('Red'), threshold=threshold)
+    style.addDrawingStyle(group='Filler Layers', name='Passiv.filler', color=toRGB('Blue'), threshold=threshold)
 
     # Blockages.
-    style.addDrawingStyle(group='Blockages', name='GatPoly.obs', color=toRGB('Blue'), pattern=toHexa('slash.8'), border=4, threshold=threshold)
-    style.addDrawingStyle(group='Blockages', name='Activ.obs', color=toRGB('Aqua'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
-    style.addDrawingStyle(group='Blockages', name='Metal1.obs', color=toRGB('LightPink'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
-    style.addDrawingStyle(group='Blockages', name='Metal2.obs', color=toRGB('Green'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
-    style.addDrawingStyle(group='Blockages', name='Metal3.obs', color=toRGB('Yellow'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
-    style.addDrawingStyle(group='Blockages', name='Metal4.obs', color=toRGB('Violet'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
-    style.addDrawingStyle(group='Blockages', name='Metal5.obs', color=toRGB('Red'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
-    style.addDrawingStyle(group='Blockages', name='TopMetal1.obs', color=toRGB('Blue'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
-    style.addDrawingStyle(group='Blockages', name='TopMetal2.obs', color=toRGB('Aqua'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
-    style.addDrawingStyle(group='Blockages', name='Cont.obs', color=toRGB('LightPink'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
-    style.addDrawingStyle(group='Blockages', name='Via1.obs', color=toRGB('Green'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
-    style.addDrawingStyle(group='Blockages', name='Via2.obs', color=toRGB('Yellow'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
-    style.addDrawingStyle(group='Blockages', name='Via3.obs', color=toRGB('Violet'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
-    style.addDrawingStyle(group='Blockages', name='Via4.obs', color=toRGB('Red'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
-    style.addDrawingStyle(group='Blockages', name='TopVia1.obs', color=toRGB('Blue'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
-    style.addDrawingStyle(group='Blockages', name='TopVia2.obs', color=toRGB('Aqua'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
+    style.addDrawingStyle(group='Blockages', name='GatPoly.nofill', color=toRGB('Blue'), pattern=toHexa('slash.8'), border=4, threshold=threshold)
+    style.addDrawingStyle(group='Blockages', name='Activ.nofill', color=toRGB('Aqua'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
+    style.addDrawingStyle(group='Blockages', name='Metal1.nofill', color=toRGB('LightPink'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
+    style.addDrawingStyle(group='Blockages', name='Metal2.nofill', color=toRGB('Green'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
+    style.addDrawingStyle(group='Blockages', name='Metal3.nofill', color=toRGB('Yellow'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
+    style.addDrawingStyle(group='Blockages', name='Metal4.nofill', color=toRGB('Violet'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
+    style.addDrawingStyle(group='Blockages', name='Metal5.nofill', color=toRGB('Red'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
+    style.addDrawingStyle(group='Blockages', name='TopMetal1.nofill', color=toRGB('Blue'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
+    style.addDrawingStyle(group='Blockages', name='TopMetal2.nofill', color=toRGB('Aqua'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
+    style.addDrawingStyle(group='Blockages', name='Cont.nofill', color=toRGB('LightPink'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
+    style.addDrawingStyle(group='Blockages', name='Via1.nofill', color=toRGB('Green'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
+    style.addDrawingStyle(group='Blockages', name='Via2.nofill', color=toRGB('Yellow'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
+    style.addDrawingStyle(group='Blockages', name='Via3.nofill', color=toRGB('Violet'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
+    style.addDrawingStyle(group='Blockages', name='Via4.nofill', color=toRGB('Red'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
+    style.addDrawingStyle(group='Blockages', name='TopVia1.nofill', color=toRGB('Blue'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
+    style.addDrawingStyle(group='Blockages', name='TopVia2.nofill', color=toRGB('Aqua'), pattern=toHexa('poids4.8'), border=4, threshold=threshold)
 
     # Group: Text.
     style.addDrawingStyle( group='Text', name='TEXT'           , color=toRGB('White'    ), border=1, threshold=400.0 )

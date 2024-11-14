@@ -31,15 +31,17 @@ def setup ( checkToolkit=None ):
         cfg.misc.verboseLevel2 = True
 
     pdkMasterTop = Path( __file__ ).parent
+    pdkIHPTop    = pdkMasterTop.parent / 'ihpsg13g2'
 
     Where( checkToolkit )
 
     techno_setup()
     StdCellLib_setup()
-    io_setup( pdkMasterTop.parent / 'ihpsg13g2' )
+    io_setup( pdkIHPTop )
 
     liberty   = pdkMasterTop / 'libs.ref' / 'StdCellLib' / 'liberty' / 'StdCellLib_nom.lib'
-    kdrcRules = pdkMasterTop / 'libs.tech' / 'klayout' / 'share' / 'C4M.IHPSG13G2.drc'
+   #kdrcRules = pdkMasterTop / 'libs.tech' / 'klayout' / 'share' / 'C4M.IHPSG13G2.drc'
+    kdrcRules = pdkIHPTop    / 'libs.tech' / 'klayout' / 'tech' / 'drc' / 'sg13g2_minimal.lydrc'
     
     with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
         cfg.etesian.graphics    = 3

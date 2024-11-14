@@ -39,22 +39,22 @@ class CoreToChip ( BaseCoreToChip ):
         with CfgCache() as cfg:
             cfg.chip.useAbstractPads = False
             cfg.chip.mergeIoGround   = False
-            self.ioPadNames = { 'in'       :'sg13g2_IOPadIn'
-                              , 'out'      :'sg13g2_IOPadOut16mA'
-                              , 'tri_out'  :'sg13g2_IOPadTriOut16mA'
-                              , 'bidir'    :'sg13g2_IOPadInOut16mA'
-                              , 'analog'   :'sg13g2_IOPadAnalog'
-                              , 'vdd'      :'sg13g2_IOPadVdd'
-                              , 'vss'      :'sg13g2_IOPadVss'
-                              , 'iovdd'    :'sg13g2_IOPadIOVdd'
-                              , 'iovss'    :'sg13g2_IOPadIOVss'
-                              , 'corner'   :'sg13g2_Corner'
-                              , 'spacer1'  :'sg13g2_Filler200'
-                              , 'spacer2'  :'sg13g2_Filler400'
-                              , 'spacer5'  :'sg13g2_Filler1000'
-                              , 'spacer10' :'sg13g2_Filler2000'
-                              , 'spacer20' :'sg13g2_Filler4000'
-                              , 'spacer50' :'sg13g2_Filler10000'
+            self.ioPadNames = { 'in'       :'sg13g2_IOPadIn_full'
+                              , 'out'      :'sg13g2_IOPadOut16mA_full'
+                              , 'tri_out'  :'sg13g2_IOPadTriOut16mA_full'
+                              , 'bidir'    :'sg13g2_IOPadInOut16mA_full'
+                              , 'analog'   :'sg13g2_IOPadAnalog_full'
+                              , 'vdd'      :'sg13g2_IOPadVdd_full'
+                              , 'vss'      :'sg13g2_IOPadVss_full'
+                              , 'iovdd'    :'sg13g2_IOPadIOVdd_full'
+                              , 'iovss'    :'sg13g2_IOPadIOVss_full'
+                              , 'corner'   :'sg13g2_Corner_full'
+                              , 'spacer1'  :'sg13g2_Filler200_full'
+                              , 'spacer2'  :'sg13g2_Filler400_full'
+                              , 'spacer5'  :'sg13g2_Filler1000_full'
+                              , 'spacer10' :'sg13g2_Filler2000_full'
+                              , 'spacer20' :'sg13g2_Filler4000_full'
+                              , 'spacer50' :'sg13g2_Filler10000_full'
                               }
         BaseCoreToChip.__init__ ( self, core )
         self.ringNetNames = { 'iovdd' : None
