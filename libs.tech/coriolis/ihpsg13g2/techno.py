@@ -294,7 +294,7 @@ def _setup_techno():
     )
     createBL(
         tech, 'Via2.nofill', BasicLayer.Material.blockage,
-        size=u(0.19), spacing=u(0.22), gds2Layer=29, gds2DataType=0
+        size=u(0.19), spacing=u(0.22), gds2Layer=29, gds2DataType=23
     )
 
     createBL(

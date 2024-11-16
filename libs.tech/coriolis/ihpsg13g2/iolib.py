@@ -95,24 +95,26 @@ def assembleIoPad ( cell ):
         if cell.getName().startswith('sg13g2_Corner'):
             addFiller  = False
             addBondPad = False
-            xShift     = u(80.0)
-            yShift     = u(80.0)
+            xShift     = u(82.0)
+            yShift     = u(82.0)
         elif    cell.getName().startswith('sg13g2_Filler'):
             addFiller  = False
             addBondPad = False
             xShift     = u( 0.0)
-            yShift     = u(80.0)
+            yShift     = u(82.0)
         elif    cell.getName().startswith('sg13g2_IOPadIOVdd') \
-             or cell.getName().startswith('sg13g2_IOPadIOVss'):
+             or cell.getName().startswith('sg13g2_IOPadIOVss') \
+             or cell.getName().startswith('sg13g2_IOPadVdd'  ) \
+             or cell.getName().startswith('sg13g2_IOPadVss'  ):
             addFiller  = True
             addBondPad = False
             xShift     = u( 0.0)
-            yShift     = u(80.0)
+            yShift     = u(82.0)
         else:
             addBondPad = True
             addFiller  = True
             xShift     = u( 0.0)
-            yShift     = u(80.0)
+            yShift     = u(82.0)
 
         extraWidth = 0
         if addFiller:
@@ -143,7 +145,7 @@ def assembleIoPad ( cell ):
         cellAb = cell.getAbutmentBox()
         completeCell.setAbutmentBox( Box( 0
                                         , 0
-                                        , cellAb.getWidth()+xShift+extraWidth
+                                        , cellAb.getWidth ()+xShift+extraWidth
                                         , cellAb.getHeight()+yShift ))
         if fillerInst:
             copyUpInterface( completeCell, fillerInst )
@@ -152,18 +154,19 @@ def assembleIoPad ( cell ):
         if not addBondPad:
             return
         if not padNet:
-            print( ErrorMessage( 1, 'sg13g2.iolib.assembleIoPad(): No "pad net in {}."' \
+            print( ErrorMessage( 1, 'sg13g2.iolib.assembleIoPad(): No "pad" net in {}.' \
                                     .format(cell.getName()) ))
             return
 
         topMetal2 = DataBase.getDB().getTechnology().getLayer( 'TopMetal2' )
+        Vertical.create( padNet, topMetal2, u(40.0), u(42.0), u(75.0), u(83.0) )
         for net in bondPadCell.getNets():
             for component in net.getComponents():
                 if component.getLayer() != topMetal2: continue
                 if not isinstance(component,Polygon): continue
                 contour = component.getPoints()
                 for point in contour:
-                    point.translate( xShift + u(40.0), yShift - u(40.0) )
+                    point.translate( xShift + u(40.0), yShift - u(42.0) )
                 p = Polygon.create( padNet, component.getLayer(), contour )
                 NetExternalComponents.setExternal( p )
                 break
@@ -197,7 +200,7 @@ def _routing ():
     cg = CellGauge.create( 'LEF.IO_Site'
                          , 'Metal2'  # pin layer name.
                          , u(  1.0)  # pitch.
-                         , u(260.0)  # cell slice height.
+                         , u(262.0)  # cell slice height.
                          , u(  1.0)  # cell slice step.
                          )
     af.addCellGauge( cg )
