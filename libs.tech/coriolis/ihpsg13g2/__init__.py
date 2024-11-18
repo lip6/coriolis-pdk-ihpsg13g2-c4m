@@ -2,12 +2,20 @@
 from pathlib import Path
 from coriolis.designflow.technos import Where
 from coriolis.designflow.task    import ShellEnv
+from .designflow.filler          import Filler
 
 
-__all__ = [ 'setup' ]
+__all__ = [ 'setup', 'pdkMasterTop', 'pdkIHPTop' ]
+
+
+pdkMasterTop = None
+pdkIHPTop    = None
 
 
 def setup ( checkToolkit=None ):
+    global pdkMasterTop
+    global pdkIHPTop
+
     from coriolis                    import Cfg 
     from coriolis                    import Viewer
     from coriolis                    import CRL 
@@ -39,10 +47,11 @@ def setup ( checkToolkit=None ):
     StdCellLib_setup()
     io_setup( pdkIHPTop )
 
-    liberty   = pdkMasterTop / 'libs.ref' / 'StdCellLib' / 'liberty' / 'StdCellLib_nom.lib'
-   #kdrcRules = pdkMasterTop / 'libs.tech' / 'klayout' / 'share' / 'C4M.IHPSG13G2.drc'
-    kdrcRules = pdkIHPTop    / 'libs.tech' / 'klayout' / 'tech' / 'drc' / 'sg13g2_minimal.lydrc'
-    lypFile   = pdkIHPTop    / 'libs.tech' / 'klayout' / 'tech' / 'sg13g2.lyp'
+    liberty      = pdkMasterTop / 'libs.ref' / 'StdCellLib' / 'liberty' / 'StdCellLib_nom.lib'
+   #kdrcRules    = pdkMasterTop / 'libs.tech' / 'klayout' / 'share' / 'C4M.IHPSG13G2.drc'
+    kdrcRules    = pdkIHPTop    / 'libs.tech' / 'klayout' / 'tech' / 'drc' / 'sg13g2_minimal.lydrc'
+    lypFile      = pdkIHPTop    / 'libs.tech' / 'klayout' / 'tech' / 'sg13g2.lyp'
+    fillerScript = pdkIHPTop    / 'libs.tech' / 'klayout' / 'tech' / 'scripts' / 'filler.py'
     
     with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
         cfg.etesian.graphics    = 3
@@ -58,3 +67,8 @@ def setup ( checkToolkit=None ):
     Klayout.setLypFile( lypFile )
     DRC.setDrcRules( kdrcRules )
     ShellEnv.CHECK_TOOLKIT = Where.checkToolkit.as_posix()
+    shellEnv = ShellEnv()
+    shellEnv[ 'PDK_ROOT' ] = pdkIHPTop.parent.as_posix()
+    shellEnv[ 'PDK'      ] = 'ihpsg13g2'
+    shellEnv.export()
+    Filler.setScript( fillerScript )

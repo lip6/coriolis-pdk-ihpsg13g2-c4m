@@ -22,8 +22,14 @@ core2chip_files = [ 'libs.tech/coriolis/ihpsg13g2/core2chip/__init__.py'
                   , 'libs.tech/coriolis/ihpsg13g2/core2chip/sg13g2io.py'
                   ]
 
-py.install_sources( files(    cells_files), subdir:'pdks/c4m_ihpsg13g2' )
-py.install_sources( files(core2chip_files), subdir:'pdks/c4m_ihpsg13g2/core2chip' )
+designflow_files = [ 'libs.tech/coriolis/ihpsg13g2/designflow/__init__.py'
+                   , 'libs.tech/coriolis/ihpsg13g2/designflow/filler.py'
+                   , 'libs.tech/coriolis/ihpsg13g2/designflow/sealring.py'
+                   ]
+
+py.install_sources( files(     cells_files), subdir:'pdks/c4m_ihpsg13g2' )
+py.install_sources( files( core2chip_files), subdir:'pdks/c4m_ihpsg13g2/core2chip' )
+py.install_sources( files(designflow_files), subdir:'pdks/c4m_ihpsg13g2/designflow' )
 
 install_subdir( 'libs.ref' , install_dir:pdks_dir )
 install_subdir( 'libs.tech', install_dir:pdks_dir , exclude_directories:['coriolis'] )
