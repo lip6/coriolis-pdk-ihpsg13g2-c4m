@@ -108,7 +108,7 @@ def _routing():
         cfg.etesian.densityVariation = 0.05
         cfg.etesian.routingDriven = False
         cfg.etesian.latchUpDistance = u(30.0 - 1.0)
-        #cfg.etesian.diodeName = 'diode_w1'
+        cfg.etesian.diodeName = 'diode_w1'
         cfg.etesian.antennaInsertThreshold = 0.50
         cfg.etesian.tieName = None
         cfg.etesian.antennaGateMaxWL = u(500.0)
