@@ -24,10 +24,10 @@ class Filler ( Klayout ):
         else:
             raise BadFillerScript( '[ERROR] Filler.setScript(): Should be <str> or <Path> ({})' \
                                    .format( script ))
-        if not rules.is_file():
+        if not script.is_file():
             raise BadFillerScript( '[ERROR] Filler.setScript(): File not found "{}"' \
                                    .format( script ))
-        Filler._script = rules
+        Filler._script = script
 
     @staticmethod
     def mkRule ( rule, targets, depends, flags=0 ):
