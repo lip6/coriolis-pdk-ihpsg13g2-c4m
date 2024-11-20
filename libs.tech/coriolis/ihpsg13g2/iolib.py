@@ -42,7 +42,7 @@ def shiftAbTo00 ( cell ):
                 component.translate( xyShift )
 
 
-def copyUpInterface ( topCell, instance ): 
+def copyUpInterface ( topCell, instance, padNetName ): 
     transf = instance.getTransformation()
     xShift = transf.getTx()
     yShift = transf.getTy()
@@ -57,9 +57,10 @@ def copyUpInterface ( topCell, instance ):
             topNet.setDirection( net.getDirection() )
             topNet.setGlobal   ( net.isGlobal() )
             topNet.setExternal ( True )
-            if net.getName() == 'pad':
+            if net.getName() == padNetName:
                 padNet = topNet
-                continue
+                if padNetName == 'pad':
+                    continue
 
         for component in NetExternalComponents.get( net ):
             if isinstance(component,Horizontal):
@@ -90,7 +91,8 @@ def assembleIoPad ( cell ):
     global bondPadCell
     global filler5Cell
 
-    yShift = u(80.0)
+    yShift     = u(80.0)
+    padNetName = 'pad'
     with UpdateSession():
         if cell.getName().startswith('sg13g2_Corner'):
             addFiller  = False
@@ -107,9 +109,13 @@ def assembleIoPad ( cell ):
              or cell.getName().startswith('sg13g2_IOPadVdd'  ) \
              or cell.getName().startswith('sg13g2_IOPadVss'  ):
             addFiller  = True
-            addBondPad = False
+            addBondPad = True
             xShift     = u( 0.0)
             yShift     = u(82.0)
+            if   cell.getName().endswith('PadIOVdd'): padNetName = 'iovdd'
+            elif cell.getName().endswith('PadIOVss'): padNetName = 'iovss'
+            elif cell.getName().endswith('PadVdd'  ): padNetName = 'vdd'
+            elif cell.getName().endswith('PadVss'  ): padNetName = 'vss'
         else:
             addBondPad = True
             addFiller  = True
@@ -149,7 +155,7 @@ def assembleIoPad ( cell ):
                                         , cellAb.getHeight()+yShift ))
         if fillerInst:
             copyUpInterface( completeCell, fillerInst )
-        padNet = copyUpInterface( completeCell, ioInst )
+        padNet = copyUpInterface( completeCell, ioInst, padNetName )
 
         if not addBondPad:
             return
@@ -193,11 +199,9 @@ def _routing ():
         cfg.chip.block.rails.vWidth   = u(30.0)
         cfg.chip.block.rails.hSpacing = u( 6.0)
         cfg.chip.block.rails.vSpacing = u( 6.0)
-        #cfg.chip.padCorner            = 'gf180mcu_fd_io__cor'
-        #cfg.chip.padSpacers           = 'gf180mcu_fd_io__fill10,gf180mcu_fd_io__fill5,gf180mcu_fd_io__fill1'
         cfg.chip.padCoreSide          = 'North'
     af = AllianceFramework.get()
-    cg = CellGauge.create( 'LEF.IO_Site'
+    cg = CellGauge.create( 'LEF.sg13g2_ioSite'
                          , 'Metal2'  # pin layer name.
                          , u(  1.0)  # pitch.
                          , u(262.0)  # cell slice height.
