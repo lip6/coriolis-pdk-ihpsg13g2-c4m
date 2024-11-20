@@ -50,10 +50,12 @@ def setup ( checkToolkit=None ):
 
     liberty        = pdkMasterTop / 'libs.ref' / 'StdCellLib' / 'liberty' / 'StdCellLib_nom.lib'
    #kdrcRules      = pdkMasterTop / 'libs.tech' / 'klayout' / 'share' / 'C4M.IHPSG13G2.drc'
-    kdrcRules      = pdkIHPTop    / 'libs.tech' / 'klayout' / 'tech' / 'drc' / 'sg13g2_minimal.lydrc'
-    lypFile        = pdkIHPTop    / 'libs.tech' / 'klayout' / 'tech' / 'sg13g2.lyp'
-    fillerScript   = pdkIHPTop    / 'libs.tech' / 'klayout' / 'tech' / 'scripts' / 'filler.py'
-    sealRingScript = pdkIHPTop    / 'libs.tech' / 'klayout' / 'tech' / 'scripts' / 'sealring.py'
+    klayoutTech    = pdkIHPTop    / 'libs.tech' / 'klayout'
+    klayoutHome    = Path().home() / '.klayout'
+    kdrcRules      = klayoutTech  / 'tech' / 'drc' / 'sg13g2_minimal.lydrc'
+    lypFile        = klayoutTech  / 'tech' / 'sg13g2.lyp'
+    fillerScript   = klayoutTech  / 'tech' / 'scripts' / 'filler.py'
+    sealRingScript = klayoutTech  / 'tech' / 'scripts' / 'sealring.py'
     
     with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
         cfg.etesian.graphics    = 3
@@ -69,9 +71,9 @@ def setup ( checkToolkit=None ):
     Klayout.setLypFile( lypFile )
     DRC.setDrcRules( kdrcRules )
     ShellEnv.CHECK_TOOLKIT = Where.checkToolkit.as_posix()
-    shellEnv = ShellEnv()
-    shellEnv[ 'PDK_ROOT' ] = pdkIHPTop.parent.as_posix()
-    shellEnv[ 'PDK'      ] = 'ihpsg13g2'
-    shellEnv.export()
+    ShellEnv.PDK_ROOT      = pdkIHPTop.parent.as_posix()
+    ShellEnv.PDK           = 'ihpsg13g2'
+    ShellEnv.KLAYOUT_PATH  = '{}:{}'.format( klayoutHome, klayoutTech )
+    ShellEnv.KLAYOUT_HOME  = '{}'.format( klayoutHome )
     Filler  .setScript( fillerScript )
     SealRing.setScript( sealRingScript )
