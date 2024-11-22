@@ -97,13 +97,13 @@ def assembleIoPad ( cell ):
         if cell.getName().startswith('sg13g2_Corner'):
             addFiller  = False
             addBondPad = False
-            xShift     = u(82.0)
-            yShift     = u(82.0)
+            xShift     = u(90.0)
+            yShift     = u(90.0)
         elif    cell.getName().startswith('sg13g2_Filler'):
             addFiller  = False
             addBondPad = False
             xShift     = u( 0.0)
-            yShift     = u(82.0)
+            yShift     = u(90.0)
         elif    cell.getName().startswith('sg13g2_IOPadIOVdd') \
              or cell.getName().startswith('sg13g2_IOPadIOVss') \
              or cell.getName().startswith('sg13g2_IOPadVdd'  ) \
@@ -111,7 +111,7 @@ def assembleIoPad ( cell ):
             addFiller  = True
             addBondPad = True
             xShift     = u( 0.0)
-            yShift     = u(82.0)
+            yShift     = u(90.0)
             if   cell.getName().endswith('PadIOVdd'): padNetName = 'iovdd'
             elif cell.getName().endswith('PadIOVss'): padNetName = 'iovss'
             elif cell.getName().endswith('PadVdd'  ): padNetName = 'vdd'
@@ -120,7 +120,7 @@ def assembleIoPad ( cell ):
             addBondPad = True
             addFiller  = True
             xShift     = u( 0.0)
-            yShift     = u(82.0)
+            yShift     = u(90.0)
 
         extraWidth = 0
         if addFiller:
@@ -145,8 +145,8 @@ def assembleIoPad ( cell ):
                                         , filler5Cell.getName()
                                         , filler5Cell
                                         , Transformation( xShift + cell.getAbutmentBox().getWidth()
-                                                          , yShift
-                                                          , Transformation.Orientation.ID )
+                                                        , yShift
+                                                        , Transformation.Orientation.ID )
                                         , Instance.PlacementStatus.FIXED )
         cellAb = cell.getAbutmentBox()
         completeCell.setAbutmentBox( Box( 0
@@ -165,14 +165,14 @@ def assembleIoPad ( cell ):
             return
 
         topMetal2 = DataBase.getDB().getTechnology().getLayer( 'TopMetal2' )
-        Vertical.create( padNet, topMetal2, u(40.0), u(42.0), u(75.0), u(83.0) )
+        Vertical.create( padNet, topMetal2, u(40.0), u(42.0), u(75.0), u(91.0) )
         for net in bondPadCell.getNets():
             for component in net.getComponents():
                 if component.getLayer() != topMetal2: continue
                 if not isinstance(component,Polygon): continue
                 contour = component.getPoints()
                 for point in contour:
-                    point.translate( xShift + u(40.0), yShift - u(42.0) )
+                    point.translate( xShift + u(40.0), yShift - u(50.0) )
                 p = Polygon.create( padNet, component.getLayer(), contour )
                 NetExternalComponents.setExternal( p )
                 break
@@ -195,16 +195,16 @@ def _routing ():
     """
     with CfgCache(priority=Cfg.Parameter.Priority.ConfigurationFile) as cfg:
         cfg.chip.block.rails.count    = 2 
-        cfg.chip.block.rails.hWidth   = u(30.0)
-        cfg.chip.block.rails.vWidth   = u(30.0)
+        cfg.chip.block.rails.hWidth   = u(40.0)
+        cfg.chip.block.rails.vWidth   = u(40.0)
         cfg.chip.block.rails.hSpacing = u( 6.0)
         cfg.chip.block.rails.vSpacing = u( 6.0)
         cfg.chip.padCoreSide          = 'North'
     af = AllianceFramework.get()
-    cg = CellGauge.create( 'LEF.sg13g2_ioSite'
+    cg = CellGauge.create( 'IOPadLib'
                          , 'Metal2'  # pin layer name.
                          , u(  1.0)  # pitch.
-                         , u(262.0)  # cell slice height.
+                         , u(270.0)  # cell slice height.
                          , u(  1.0)  # cell slice step.
                          )
     af.addCellGauge( cg )
