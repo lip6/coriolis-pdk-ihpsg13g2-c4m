@@ -41,7 +41,8 @@ class Filler ( Klayout ):
         depends   = FlowTask._normFileList( depends )
         if not Filler._script:
             raise ErrorMessage( 1, 'Filler.doTask(): No script defined.' )
+        env       = {}
         variables = { 'output_file' : targets[0] }
         if flags & Filler.NoActiv: variables[ 'no_activ' ] = None
         if flags & Filler.NoMetal: variables[ 'no_metal' ] = None
-        super().__init__( rule, targets, depends, Filler._script, arguments, variables, flags )
+        super().__init__( rule, targets, depends, Filler._script, arguments, variables, env, flags )

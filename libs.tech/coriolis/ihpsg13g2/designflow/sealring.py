@@ -38,8 +38,9 @@ class SealRing ( Klayout ):
         depends   = []
         if not SealRing._script:
             raise ErrorMessage( 1, 'SealRing.doTask(): No script defined.' )
+        env       = {}
         variables = { 'output' : targets[0]
                     , 'width'  : str(size[0])
                     , 'height' : str(size[1])
                     }
-        super().__init__( rule, targets, depends, SealRing._script, arguments, variables, flags )
+        super().__init__( rule, targets, depends, SealRing._script, arguments, variables, env, flags )
