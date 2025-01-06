@@ -4,7 +4,7 @@
 
  printHelp () {
    echo ""
-   echo "  Usage: mkArchives.sh [--sources] [--docs] [--venv] [--commit] [--run]"
+   echo "  Usage: uploadOBSs.sh [--sources] [--docs] [--venv] [--commit] [--run]"
    echo ""
    echo "  Options:"
    echo "    [--sources] : Build an archive from the HEAD of the current branch."
@@ -38,11 +38,11 @@
    shift
  done
  if [ ! -z "${badArgument}" ]; then
-   echo "[ERROR] mkArchive.sh: Unknown argument \"${badArgument}\"."
+   echo "[ERROR] uploadOBS.sh: Unknown argument \"${badArgument}\"."
    exit 1
  fi
 
- echo "Running mkArchives.sh"
+ echo "Running uploadOBSs.sh"
  echo "* Using HEAD githash as release: ${githash}."
  if [ "${doSources}" = "true" ]; then
    echo "* Making source file archive from Git HEAD ..."
