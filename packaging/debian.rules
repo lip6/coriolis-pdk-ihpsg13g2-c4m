@@ -1,0 +1,7 @@
+#!/usr/bin/make -f
+export PYBUILD_NAME    = coriolis-pdk-ihpsg13g2-c4m
+export PYBUILD_VERBOSE = 1
+export DH_VERBOSE      = 1
+
+%:
+	dh $@ --with python3 --buildsystem=pybuild

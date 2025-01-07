@@ -4,6 +4,6 @@
    buildDir="${rootDir}/release/build-ihp-c4m"
  installDir="${rootDir}/release/install"
  rm -rf ${buildDir}
- rm -rf ${installDir}/lib64/python3.9/site-packages/pdks/c4m_ihpsg13g2
+ rm -rf ${installDir}/lib64/python3.9/site-packages/pdks/ihpsg13g2_c4m
  meson setup --prefix ${installDir} ${buildDir}
  meson install -C ${buildDir}

@@ -1,0 +1,7 @@
+coriolis-pdk-ihpsg13g2-c4m (2024.10.15) unstable; urgency=low
+
+  * Initial release. Closes: #00001
+  * Updated debian packages files
+  * Update control file.
+  
+  -- Jean-Paul Chaput <Jean-Paul.Chaput@lip6.fr> Tue Jan  7 11:34:17 AM CET 2025

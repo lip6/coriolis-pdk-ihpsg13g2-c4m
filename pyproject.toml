@@ -4,7 +4,7 @@ build-backend = "mesonpy"
 requires = ["meson-python"]
 
 [project]
-name = "c4m-ihpsg13g2-pdk"
+name = "coriolis-pdk-ihpsg13g2-c4m"
 version = "2024.10.15"
 authors = [ { name="Jean-Paul Chaput", email="Jean-Paul.Chaput@lip6.fr" }
           , { name="Staf Verhaegen"  , email="staf@fibraservi.eu" }
