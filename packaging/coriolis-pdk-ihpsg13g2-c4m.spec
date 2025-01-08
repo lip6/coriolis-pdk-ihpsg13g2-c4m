@@ -21,6 +21,7 @@ Source1:        venv-al9-2.5.5.tar.gz
 Source2:        patchvenv.sh
 Source10:       %{name}-rpmlintrc
 Requires:       coriolis-eda
+Requires:       coriolis-pdk-ihpsg13g2
 Requires:       python%{python3_pkgversion}-ihpsg13g2-pdk
 
 BuildArch:      noarch

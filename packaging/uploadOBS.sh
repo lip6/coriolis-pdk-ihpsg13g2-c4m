@@ -1,18 +1,22 @@
 
-    version="2024.10.15"
-     obsDir="../coriolis-obs/home:jpc-lip6/coriolis-pdk-ihpsg13g2-c4m"
+  venvVersion="2.5.5"
+ venvSnapshot="venv-al9-${venvVersion}.tar.gz"
+      version="2024.10.15"
+       obsDir="../coriolis-obs/home:jpc-lip6/coriolis-pdk-ihpsg13g2-c4m"
 
  printHelp () {
    echo ""
-   echo "  Usage: uploadOBSs.sh [--sources] [--docs] [--commit] [--run]"
+   echo "  Usage: uploadOBSs.sh [--sources] [--venv] [--commit] [--all]"
    echo ""
    echo "  Options:"
    echo "    [--sources] : Build an archive from the HEAD of the current branch."
+   echo "    [--venv]    : Copy the venv snapshot from coriolis-eda OBS local checkout."
+   echo "                    <./coriolis-obs/home:jpc-lip6/coriolis-eda/${venvSnapshot}>"
    echo "    [--commit]  : Push the files (commit) on the remote builder repository."
    echo "                  This will effectively triggers the rebuild of the packages."
    echo "                  OBS local repository is hardwired to:"
    echo "                      \"${obsDir}\""
-   echo "    [--run]     : Perform all actions at once."
+   echo "    [--all]     : Perform all actions at once."
    echo ""
 
  }
@@ -29,7 +33,7 @@
    case $1 in
      --sources) doSources="true";;
      --commit)  doCommit="true";;
-     --run)     doSources="true"
+     --all)     doSources="true"
                 doDocs="true"
                 doVEnv="true"
                 doCommit="true";;
@@ -46,9 +50,24 @@
  echo "* Using HEAD githash as release: ${githash}."
  if [ "${doSources}" = "true" ]; then
    echo "* Making source file archive from Git HEAD ..."
-   ./packaging/git-archive-all.sh -v --prefix coriolis-pdk-ihpsg13g2-c4m-2024.10.15/ \
+   ./packaging/git-archive-all.sh -v --prefix coriolis-pdk-ihpsg13g2-c4m-${version}/ \
                                      --format tar.gz \
                                      coriolis-pdk-ihpsg13g2-c4m-${version}.tar.gz
+ fi
+
+ if [ "${doVenv}" = "true" ]; then
+   if [ -f "${obsDir}/${venvSnapshot}" ]; then
+     echo "* Venv snaphot already copied."
+   else
+     referenceVenvSnapshot="../coriolis-eda/${venvSnapshot}"
+     if [ ! -f "${referenceVenvSnapshot}" ]; then
+       echo "[ERROR] Venv snapshot reference not found in <${referenceVenvSnapshot}>."
+       echo "        You must checkout the coriolis-eda project *or*, if it is already there,"
+       echo "        actually make the snapshot from it."
+       exit 1
+     fi
+     cp ${referenceVenvSnapshot} .
+   fi
  fi
 
  echo "* Update files in OBS project directory."
@@ -56,7 +75,7 @@
  for distribFile in packaging/coriolis-pdk-ihpsg13g2-c4m.spec      \
                     packaging/coriolis-pdk-ihpsg13g2-c4m-rpmlintrc \
                     packaging/patchvenv.sh                         \
-                    venv-al9-2.5.5.tar.gz                          \
+                    ${venvSnapshot}                                \
                     coriolis-pdk-ihpsg13g2-c4m-${version}.tar.gz   \
                     packaging/coriolis-pdk-ihpsg13g2-c4m.dsc       \
                     packaging/coriolis-pdk-ihpsg13g2-c4m-rpmlintrc \
@@ -78,6 +97,7 @@
  sed -i "s,^Release: *1,Release:        <CI_CNT>.<B_CNT>.${githash}," ${obsDir}/coriolis-pdk-ihpsg13g2-c4m.spec
  if [ "${doCommit}" = "true" ]; then
    pushd ${obsDir}
+   osc add *
    osc commit
    popd
  fi

@@ -2,6 +2,44 @@
 export PYBUILD_NAME    = coriolis-pdk-ihpsg13g2-c4m
 export PYBUILD_VERBOSE = 1
 export DH_VERBOSE      = 1
+       DESTDIR         = $(CURDIR)/debian
+
+#%:
+#	cat /etc/os-release
+#	. /etc/os-release
+#	dh $@ --with python3 --buildsystem=pybuild
 
 %:
-	dh $@ --with python3 --buildsystem=pybuild
+	dh $@
+
+
+binary:
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs
+	dh_prep
+	tar zxvf /usr/src/packages/SOURCES/venv-al9-2.5.5.tar.gz
+	cp /usr/src/packages/SOURCES/patchvenv.sh .
+	chmod u+x ./patchvenv.sh
+	./patchvenv.sh --use-system-packages --remove-venv-watchfiles --remove-pip
+	. .venv/bin/activate; \
+	mkdir build_wheel; \
+	python3 -m pip wheel --no-deps --no-cache-dir \
+	  --disable-pip-version-check --progress-bar off --verbose \
+	  --no-build-isolation --no-clean \
+	  --wheel-dir=./build_wheel .; \
+	python3 -m pip install --root $(DESTDIR) --prefix /usr --no-deps \
+	  --disable-pip-version-check --progress-bar off --verbose \
+	  --ignore-installed --no-warn-script-location \
+	  --no-index --no-cache-dir ./build_wheel/`ls ./build_wheel`
+	dh_installdeb
+	dh_install
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+clean:
+	dh_testdir
+	dh_testroot
+	dh_clean
