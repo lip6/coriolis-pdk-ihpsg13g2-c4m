@@ -2,7 +2,7 @@
 export PYBUILD_NAME    = coriolis-pdk-ihpsg13g2-c4m
 export PYBUILD_VERBOSE = 1
 export DH_VERBOSE      = 1
-       DESTDIR         = $(CURDIR)/debian
+       DESTDIR         = $(CURDIR)/debian/$(PYBUILD_NAME)
 
 #%:
 #	cat /etc/os-release
@@ -18,7 +18,7 @@ binary:
 	dh_testroot
 	dh_installchangelogs
 	dh_prep
-	tar zxvf /usr/src/packages/SOURCES/venv-al9-2.5.5.tar.gz
+	tar zxf /usr/src/packages/SOURCES/venv-al9-2.5.5.tar.gz
 	cp /usr/src/packages/SOURCES/patchvenv.sh .
 	chmod u+x ./patchvenv.sh
 	./patchvenv.sh --use-system-packages --remove-venv-watchfiles --remove-pip
