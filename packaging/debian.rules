@@ -32,6 +32,8 @@ binary:
 	  --disable-pip-version-check --progress-bar off --verbose \
 	  --ignore-installed --no-warn-script-location \
 	  --no-index --no-cache-dir ./build_wheel/`ls ./build_wheel`
+	mkdir -p $(DESTDIR)/usr/lib/python3/dist-packages
+	mv $(DESTDIR)/usr/lib/python3*/site-packages/* $(DESTDIR)/usr/lib/python3/dist-packages
 	dh_installdeb
 	dh_install
 	dh_shlibdeps
