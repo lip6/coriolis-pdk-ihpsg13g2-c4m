@@ -14,8 +14,6 @@ Build-Depends:     debhelper-compat (= 13),
                    python3-dev,
                    python3-pip,
                    python3-pip-whl,
-		   coriolis-pdk-ihpsg13g2,
-		   yosys,
 Package-List:
  coriolis-pdk-ihpsg13g2-c4m     deb Science/Electronics optional arch=any
 DEBTRANSFORM-RELEASE:   1

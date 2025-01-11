@@ -11,7 +11,6 @@ Build-Depends: debhelper-compat (= 13),
                python3-pip,
                python3-pip-whl,
                coriolis-pdk-ihpsg13g2,
-               yosys,
 Standards-Version: 2024.10.15
 Homepage: https://coriolis.lip6.fr/
 Rules-Requires-Root: no
@@ -24,6 +23,7 @@ Multi-Arch: foreign
 Depends:
  ${misc:Depends},
  ${shlibs:Depends},
- coriolis-pdk-ihpsg13g2
+ coriolis-pdk-ihpsg13g2,
+ yosys,
 Description:
  The Chips4Makers PDKMaster targeted for IHPSG13G2 technology.
