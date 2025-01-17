@@ -810,9 +810,3 @@ def setup():
     _setup_techno()
     _setup_display()
     loadAnalogTechno(analogTechnologyTable, __file__)
-    try:
-        from .techno_fix import fix
-    except:
-        pass
-    else:
-        fix()
