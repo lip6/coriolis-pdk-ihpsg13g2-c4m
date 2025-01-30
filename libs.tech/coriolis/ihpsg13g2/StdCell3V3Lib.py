@@ -14,7 +14,11 @@ from coriolis.helpers import u, l
 from coriolis.helpers.technology import setEnclosures
 from coriolis.helpers.overlay import CfgCache, UpdateSession
 
+from .arrakeen import c4m_ihpsg13g2, c4m_tech, c4m_export
+
+
 __all__ = ["setup"]
+
 
 def createRL(tech, net, layer, coords):
     coords = [Point(u(x), u(y)) for x,y in coords]
@@ -39071,7 +39075,19 @@ def _load():
     return lib
 
 def setup():
-    lib = _load()
+    from c4m.flexcell import coriolis_export_spec
+
+    af = CRL.AllianceFramework.get()
+    db = DataBase.getDB()
+    tech = db.getTechnology()
+    rootlib = db.getRootLibrary()
+
+    lib = c4m_export.library2library(
+        lib=c4m_ihpsg13g2.stdcell3v3lib,
+        pin_prim=c4m_tech.primitives["Metal1"], pin_dir="vertical",
+        excl_cells=("Gallery",), spec=coriolis_export_spec,
+        hurtech=tech, hurrootlib=rootlib,
+    )
     _routing()
 
     spiceDir = Path(__file__).parent / 'libs.ref' / 'StdCell3V3Lib' / 'spice'
