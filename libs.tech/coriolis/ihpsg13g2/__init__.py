@@ -41,6 +41,7 @@ def setup ( checkToolkit=None ):
 
     techno_setup()
     StdCellLib_setup()
+    StdCell3V3Lib_setup()
     io_setup( pdkIHPTop )
 
     liberty        = pdkMasterTop / 'libs.ref' / 'StdCellLib' / 'liberty' / 'StdCellLib_nom.lib'
