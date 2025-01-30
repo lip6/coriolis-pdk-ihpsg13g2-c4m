@@ -11,6 +11,7 @@ pdks_dir = py.get_install_dir() / 'pdks' / 'c4m_ihpsg13g2'
 
 cells_files = [ 'libs.tech/coriolis/ihpsg13g2/StdCell3V3Lib.py'
               , 'libs.tech/coriolis/ihpsg13g2/StdCellLib.py'
+              , 'libs.tech/coriolis/ihpsg13g2/arrakeen.py'
               , 'libs.tech/coriolis/ihpsg13g2/iolib.py'
               , 'libs.tech/coriolis/ihpsg13g2/__init__.py'
               , 'libs.tech/coriolis/ihpsg13g2/techno.py'
