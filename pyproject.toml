@@ -7,7 +7,7 @@ requires = ["meson-python"]
 name = "c4m-ihpsg13g2-pdk"
 version = "2024.10.15"
 authors = [ { name="Jean-Paul Chaput", email="Jean-Paul.Chaput@lip6.fr" }
-          , { name="Staf Verhaegen"  , email="staf@fibraservi.eu" }
+          , { name="Staf Verhaegen",   email="staf@fibraservi.eu" }
           ]
 description = "PDK for IHP SG13G2 process node (130nm)"
 readme = "README.rst"
@@ -16,6 +16,14 @@ keywords = [ "vlsi", "pdk" ]
 classifiers = [ "Development Status :: 3 - Alpha" 
               , "Programming Language :: Python :: 3.8"
               ]
+requires-python = ">=3.8"
+dependencies = ["PDKMaster>=0.11.4", "c4m-pdk-ihpsg13g2>=0.1.1", "coriolis-eda>=2.5.4a0"]
 
 [project.urls]
 Homepage = "https://gitlab.com/Chips4Makers"
+
+[dependency-groups]
+dev = [
+    "PDKMaster @ git+https://gitlab.com/Chips4Makers/PDKMaster@corio_lib_export",
+    "c4m-pdk-ihpsg13g2 @ git+https://gitlab.com/Chips4Makers/c4m-pdk-ihpsg13g2@main",
+]
