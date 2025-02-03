@@ -16,6 +16,8 @@ keywords = [ "vlsi", "pdk" ]
 classifiers = [ "Development Status :: 3 - Alpha" 
               , "Programming Language :: Python :: 3.8"
               ]
+requires-python = ">=3.8"
+dependencies = ["coriolis-eda>=2.5.4a0"]
 
 [project.urls]
 Homepage = "https://gitlab.com/Chips4Makers"
