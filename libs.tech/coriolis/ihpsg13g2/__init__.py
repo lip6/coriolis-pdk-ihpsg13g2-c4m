@@ -9,14 +9,11 @@ from .designflow.sealring        import SealRing
 __all__ = [ 'setup', 'pdkMasterTop', 'pdkIHPTop' ]
 
 
-pdkMasterTop = None
-pdkIHPTop    = None
+pdkMasterTop = Path( __file__ ).parent
+pdkIHPTop    = pdkMasterTop.parent / 'ihpsg13g2'
 
 
 def setup ( checkToolkit=None ):
-    global pdkMasterTop
-    global pdkIHPTop
-
     from coriolis                    import Cfg 
     from coriolis                    import Viewer
     from coriolis                    import CRL 
@@ -39,9 +36,6 @@ def setup ( checkToolkit=None ):
         cfg.misc.logMode       = True
         cfg.misc.verboseLevel1 = True
         cfg.misc.verboseLevel2 = True
-
-    pdkMasterTop = Path( __file__ ).parent
-    pdkIHPTop    = pdkMasterTop.parent / 'ihpsg13g2'
 
     Where( checkToolkit )
 
