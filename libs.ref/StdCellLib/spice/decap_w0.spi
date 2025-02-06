@@ -1,0 +1,4 @@
+.subckt decap_w0 vdd vss
+Xnpass vss one zero vss sg13_lv_nmos l=1.3e-07 w=1.48e-06
+Xppass one zero vdd vdd sg13_lv_pmos l=1.3e-07 w=1.52e-06
+.ends decap_w0

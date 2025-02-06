@@ -23,6 +23,7 @@ def setup ( checkToolkit=None ):
     from coriolis.helpers            import overlay, l, u, n
     from coriolis.designflow.yosys   import Yosys
     from coriolis.designflow.klayout import Klayout
+    from coriolis.designflow.sta     import STA
     from .designflow.drc             import DRC
     from .techno                     import setup as techno_setup 
     from .StdCellLib                 import setup as StdCellLib_setup
@@ -51,6 +52,7 @@ def setup ( checkToolkit=None ):
 
     liberty        = pdkMasterTop / 'libs.ref' / 'StdCellLib' / 'liberty' / 'StdCellLib_nom.lib'
    #kdrcRules      = pdkMasterTop / 'libs.tech' / 'klayout' / 'share' / 'C4M.IHPSG13G2.drc'
+    ngspiceTech    = pdkIHPTop    / 'libs.tech' / 'ngspice'
     klayoutTech    = pdkIHPTop    / 'libs.tech' / 'klayout'
     klayoutHome    = Path().home() / '.klayout'
     kdrcRulesMin   = klayoutTech  / 'tech' / 'drc' / 'sg13g2_minimal.lydrc'
@@ -71,6 +73,7 @@ def setup ( checkToolkit=None ):
         env.setCLOCK( '^sys_clk$|^ck|^jtag_tck$' )
 
     Yosys.setLiberty( liberty )
+
     Klayout.setLypFile( lypFile )
     DRC.setDrcRules( kdrcRulesMin, DRC.Minimal )
     DRC.setDrcRules( kdrcRulesMax, DRC.Maximal )
@@ -82,3 +85,19 @@ def setup ( checkToolkit=None ):
     ShellEnv.KLAYOUT_HOME  = '{}'.format( klayoutHome )
     Filler  .setScript( fillerScript )
     SealRing.setScript( sealRingScript )
+
+    STA.flags         = STA.Transistor
+    STA.SpiceType     = 'hspice'
+    STA.SpiceTrModel  = [ 'mos_tt.lib' ]
+    STA.OSDIdll       = ngspiceTech / 'openvaf' / 'psp103_nqs.osdi'
+    STA.MBK_CATA_LIB  = '.:' + (pdkIHPTop/'libs.tech'/'ngspice'/'models').as_posix() \
+                       + ':' + (pdkMasterTop).as_posix() \
+                       + ':' + (pdkMasterTop/'libs.ref'/'StdCellLib'/'spice').as_posix()
+    STA.MBK_SPI_MODEL = 'spimodel.cfg'
+    STA.Temperature   = 25.0
+    STA.VddSupply     = 1.8 
+    STA.VddName       = 'vdd'
+    STA.VssName       = 'vss'
+    STA.ClockName     = 'm_clock'
+    print( STA.MBK_SPI_MODEL )
+

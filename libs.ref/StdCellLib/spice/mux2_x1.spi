@@ -1,0 +1,14 @@
+.subckt mux2_x1 vdd vss i0 i1 cmd q
+Xcmd_inv_nmos cmd_n cmd vss vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xcmd_inv_pmos cmd_n cmd vdd vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xi0_nmos vss i0 _net0 vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xi0_pmos vdd i0 _net1 vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xcmd_n_npass _net0 cmd_n _q_n vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xcmd_ppass _net1 cmd _q_n vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xcmd_npass _q_n cmd _net2 vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xcmd_n_ppass _q_n cmd_n _net3 vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xi1_nmos _net2 i1 vss vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xi1_pmos _net3 i1 vdd vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xq_n_inv_nmos vss _q_n q vss sg13_lv_nmos l=1.3e-07 w=1.21e-06
+Xq_n_inv_pmos vdd _q_n q vdd sg13_lv_pmos l=1.3e-07 w=1.25e-06
+.ends mux2_x1

@@ -1,0 +1,10 @@
+.subckt nsnrlatch_x0 vdd vss nset nrst q nq
+Xnset_nmos q nset _net0 vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xnset_pmos vdd nset q vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xnq_nmos _net0 nq vss vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xnq_pmos q nq vdd vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xq_nmos vss q _net1 vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xq_pmos vdd q nq vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xnrst_nmos _net1 nrst nq vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xnrst_pmos nq nrst vdd vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+.ends nsnrlatch_x0

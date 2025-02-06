@@ -1,0 +1,4 @@
+.subckt inv_x1 vdd vss i nq
+Xnmos vss i nq vss sg13_lv_nmos l=1.3e-07 w=1.66e-06
+Xpmos vdd i nq vdd sg13_lv_pmos l=1.3e-07 w=1.7e-06
+.ends inv_x1

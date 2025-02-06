@@ -1,0 +1,2 @@
+.subckt tie vdd vss
+.ends tie

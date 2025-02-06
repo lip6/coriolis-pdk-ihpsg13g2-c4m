@@ -1,0 +1,2 @@
+.subckt fill_w2 vdd vss
+.ends fill_w2

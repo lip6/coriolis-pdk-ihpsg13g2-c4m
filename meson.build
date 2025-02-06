@@ -35,3 +35,6 @@ py.install_sources( files(designflow_files), subdir:'pdks/ihpsg13g2_c4m/designfl
 install_subdir( 'libs.ref' , install_dir:pdks_dir )
 install_subdir( 'libs.tech', install_dir:pdks_dir , exclude_directories:['coriolis'] )
 
+install_data( 'libs.tech/coriolis/mos_tt.lib'  , install_dir:pdks_dir )
+install_data( 'libs.tech/coriolis/spimodel.cfg', install_dir:pdks_dir )
+

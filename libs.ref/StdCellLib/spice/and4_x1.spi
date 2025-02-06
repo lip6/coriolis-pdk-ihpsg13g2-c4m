@@ -1,0 +1,12 @@
+.subckt and4_x1 vdd vss q i0 i1 i2 i3
+Xi0_nmos nq i0 _net0 vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xi0_pmos vdd i0 nq vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xi1_nmos _net0 i1 _net1 vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xi1_pmos nq i1 vdd vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xi2_nmos _net1 i2 _net2 vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xi2_pmos vdd i2 nq vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xi3_nmos _net2 i3 vss vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xi3_pmos nq i3 vdd vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xn_pd vss nq q vss sg13_lv_nmos l=1.3e-07 w=1.66e-06
+Xq_pu vdd nq q vdd sg13_lv_pmos l=1.3e-07 w=1.7e-06
+.ends and4_x1

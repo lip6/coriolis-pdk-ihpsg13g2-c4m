@@ -1,0 +1,14 @@
+.subckt nexor2_x0 vdd vss i0 i1 nq
+Xi0_nmos0 i0_n i0 vss vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xi0_pmos0 i0_n i0 vdd vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xi0_nmos1 vss i0 _net0 vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xi0_pmos1 vdd i0 _net1 vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xi1_n_nmos _net0 i1_n nq vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xi1_pmos0 _net1 i1 nq vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xi0_n_nmos nq i0_n _net2 vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xi0_n_pmos nq i0_n _net1 vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xi1_nmos0 _net2 i1 vss vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xi1_n_pmos _net1 i1_n vdd vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xi1_nmos1 vss i1 i1_n vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xi1_pmos1 vdd i1 i1_n vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+.ends nexor2_x0

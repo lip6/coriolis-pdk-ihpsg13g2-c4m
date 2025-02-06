@@ -1,0 +1,8 @@
+.subckt buf_x2 vdd vss i q
+Xstage0_nmos _i_n i vss vss sg13_lv_nmos l=1.3e-07 w=7.8e-07
+Xstage0_pmos _i_n i vdd vdd sg13_lv_pmos l=1.3e-07 w=7.8e-07
+Xnmos[0] vss _i_n q vss sg13_lv_nmos l=1.3e-07 w=1.21e-06
+Xpmos[0] vdd _i_n q vdd sg13_lv_pmos l=1.3e-07 w=1.25e-06
+Xnmos[1] q _i_n vss vss sg13_lv_nmos l=1.3e-07 w=1.21e-06
+Xpmos[1] q _i_n vdd vdd sg13_lv_pmos l=1.3e-07 w=1.25e-06
+.ends buf_x2

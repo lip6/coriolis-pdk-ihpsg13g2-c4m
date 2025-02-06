@@ -1,0 +1,2 @@
+.subckt tie_w2 vdd vss
+.ends tie_w2

@@ -1,5 +1,5 @@
 %global python3_pkgversion 3.11
-%if 0%{?fedora} >= 39
+%if 0%{?rhel} >= 9 || 0%{?fedora} >= 39
 %global python3_pkgversion 3
 %endif
 %if 0%{?is_opensuse}
@@ -21,8 +21,9 @@ Source1:        venv-al9-2.5.5.tar.gz
 Source2:        patchvenv.sh
 Source10:       %{name}-rpmlintrc
 Requires:       coriolis-eda
-Requires:       coriolis-pdk-ihpsg13g2
-Requires:       python%{python3_pkgversion}-ihpsg13g2-pdk
+Requires:       python%{python3_pkgversion}-coriolis-pdk-ihpsg13g2
+Requires:       yosys
+Requires:       klayout
 
 BuildArch:      noarch
 %if 0%{?rhel} || 0%{?fedora}

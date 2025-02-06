@@ -1,0 +1,2 @@
+.subckt tie_diff_w4 vdd vss
+.ends tie_diff_w4
