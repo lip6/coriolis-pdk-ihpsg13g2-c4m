@@ -17,18 +17,19 @@ def setup ( checkToolkit=None ):
     global pdkMasterTop
     global pdkIHPTop
 
-    from coriolis                    import Cfg 
-    from coriolis                    import Viewer
-    from coriolis                    import CRL 
-    from coriolis.helpers            import overlay, l, u, n
-    from coriolis.designflow.yosys   import Yosys
-    from coriolis.designflow.klayout import Klayout
-    from coriolis.designflow.sta     import STA
-    from .designflow.drc             import DRC
-    from .techno                     import setup as techno_setup 
-    from .StdCellLib                 import setup as StdCellLib_setup
-    from .StdCell3V3Lib              import setup as StdCell3V3Lib_setup
-    from .iolib                      import setup as io_setup
+    from coriolis                     import Cfg 
+    from coriolis                     import Viewer
+    from coriolis                     import CRL 
+    from coriolis.helpers             import overlay, l, u, n
+    from coriolis.designflow.yosys    import Yosys
+    from coriolis.designflow.klayout  import Klayout
+    from coriolis.designflow.lvx      import Lvx
+    from coriolis.designflow.tasyagle import TasYagle
+    from .designflow.drc              import DRC
+    from .techno                      import setup as techno_setup 
+    from .StdCellLib                  import setup as StdCellLib_setup
+    from .StdCell3V3Lib               import setup as StdCell3V3Lib_setup
+    from .iolib                       import setup as io_setup
     
     with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
         cfg.misc.catchCore     = False
@@ -86,18 +87,18 @@ def setup ( checkToolkit=None ):
     Filler  .setScript( fillerScript )
     SealRing.setScript( sealRingScript )
 
-    STA.flags         = STA.Transistor
-    STA.SpiceType     = 'hspice'
-    STA.SpiceTrModel  = [ 'mos_tt.lib' ]
-    STA.OSDIdll       = ngspiceTech / 'openvaf' / 'psp103_nqs.osdi'
-    STA.MBK_CATA_LIB  = '.:' + (pdkIHPTop/'libs.tech'/'ngspice'/'models').as_posix() \
-                       + ':' + (pdkMasterTop).as_posix() \
-                       + ':' + (pdkMasterTop/'libs.ref'/'StdCellLib'/'spice').as_posix()
-    STA.MBK_SPI_MODEL = 'spimodel.cfg'
-    STA.Temperature   = 25.0
-    STA.VddSupply     = 1.8 
-    STA.VddName       = 'vdd'
-    STA.VssName       = 'vss'
-    STA.ClockName     = 'm_clock'
-    print( STA.MBK_SPI_MODEL )
+    TasYagle.flags         = TasYagle.Transistor
+    TasYagle.SpiceType     = 'hspice'
+    TasYagle.SpiceTrModel  = [ 'mos_tt.lib' ]
+    TasYagle.OSDIdll       = ngspiceTech / 'openvaf' / 'psp103_nqs.osdi'
+    TasYagle.MBK_CATA_LIB  = '.:' + (ngspiceTech / 'models').as_posix() \
+                           + ':' + (pdkMasterTop).as_posix() \
+                           + ':' + (pdkMasterTop/'libs.ref'/'StdCellLib'/'spice').as_posix()
+    Lvx.MBK_CATA_LIB  = TasYagle.MBK_CATA_LIB
+    TasYagle.MBK_SPI_MODEL = pdkMasterTop / 'spimodel.cfg'
+    TasYagle.Temperature   = 25.0
+    TasYagle.VddSupply     = 1.8 
+    TasYagle.VddName       = 'vdd'
+    TasYagle.VssName       = 'vss'
+    TasYagle.ClockName     = 'm_clock'
 
