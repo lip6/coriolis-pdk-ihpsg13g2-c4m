@@ -201,7 +201,7 @@ def _routing ():
         cfg.chip.block.rails.vSpacing = u( 6.0)
         cfg.chip.padCoreSide          = 'North'
     af = AllianceFramework.get()
-    cg = CellGauge.create( 'IOPadLib'
+    cg = CellGauge.create( 'LEF.IO_Site'
                          , 'Metal2'  # pin layer name.
                          , u(  1.0)  # pitch.
                          , u(270.0)  # cell slice height.
