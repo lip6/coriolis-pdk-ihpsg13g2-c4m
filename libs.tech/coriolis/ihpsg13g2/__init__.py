@@ -24,6 +24,7 @@ def setup ( checkToolkit=None ):
     from coriolis.designflow.yosys    import Yosys
     from coriolis.designflow.klayout  import Klayout
     from coriolis.designflow.lvx      import Lvx
+    from coriolis.designflow.x2y      import x2y
     from coriolis.designflow.tasyagle import TasYagle
     from .designflow.drc              import DRC
     from .techno                      import setup as techno_setup 
@@ -52,6 +53,7 @@ def setup ( checkToolkit=None ):
     io_setup( pdkIHPTop )
 
     liberty        = pdkMasterTop / 'libs.ref' / 'StdCellLib' / 'liberty' / 'StdCellLib_nom.lib'
+    spiceCells     = pdkMasterTop / 'libs.ref' / 'StdCellLib' / 'spice'
    #kdrcRules      = pdkMasterTop / 'libs.tech' / 'klayout' / 'share' / 'C4M.IHPSG13G2.drc'
     ngspiceTech    = pdkIHPTop    / 'libs.tech' / 'ngspice'
     klayoutTech    = pdkIHPTop    / 'libs.tech' / 'klayout'
@@ -72,8 +74,12 @@ def setup ( checkToolkit=None ):
         lg5.setType( CRL.RoutingLayerGauge.PowerSupply )
         env = af.getEnvironment()
         env.setCLOCK( '^sys_clk$|^ck|^jtag_tck$' )
+        env.setSCALE_X( 100 )
 
     Yosys.setLiberty( liberty )
+    shellEnv = ShellEnv( 'IHP SG13G2 Alliance Environment' )
+    shellEnv[ 'MBK_CATA_LIB' ] = shellEnv[ 'MBK_CATA_LIB' ] + ':' + spiceCells.as_posix()
+    shellEnv.export()
 
     Klayout.setLypFile( lypFile )
     DRC.setDrcRules( kdrcRulesMin, DRC.Minimal )
@@ -95,6 +101,7 @@ def setup ( checkToolkit=None ):
                            + ':' + (pdkMasterTop).as_posix() \
                            + ':' + (pdkMasterTop/'libs.ref'/'StdCellLib'/'spice').as_posix()
     Lvx.MBK_CATA_LIB  = TasYagle.MBK_CATA_LIB
+    x2y.MBK_CATA_LIB  = TasYagle.MBK_CATA_LIB
     TasYagle.MBK_SPI_MODEL = pdkMasterTop / 'spimodel.cfg'
     TasYagle.Temperature   = 25.0
     TasYagle.VddSupply     = 1.8 
