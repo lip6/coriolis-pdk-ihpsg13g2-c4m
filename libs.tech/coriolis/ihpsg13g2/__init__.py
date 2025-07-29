@@ -22,6 +22,7 @@ def setup ( checkToolkit=None ):
     from coriolis                     import CRL 
     from coriolis.helpers             import overlay, l, u, n
     from coriolis.designflow.yosys    import Yosys
+    from coriolis.designflow.iverilog import Iverilog
     from coriolis.designflow.klayout  import Klayout
     from coriolis.designflow.lvx      import Lvx
     from coriolis.designflow.x2y      import x2y
@@ -53,9 +54,11 @@ def setup ( checkToolkit=None ):
     io_setup( pdkIHPTop )
 
     liberty        = pdkMasterTop / 'libs.ref' / 'StdCellLib' / 'liberty' / 'StdCellLib_nom.lib'
+    stdCellLibVlog = pdkMasterTop / 'libs.ref' / 'StdCellLib' / 'verilog' / 'StdCellLib.v'
     spiceCells     = pdkMasterTop / 'libs.ref' / 'StdCellLib' / 'spice'
    #kdrcRules      = pdkMasterTop / 'libs.tech' / 'klayout' / 'share' / 'C4M.IHPSG13G2.drc'
     ngspiceTech    = pdkIHPTop    / 'libs.tech' / 'ngspice'
+    verilogATech   = pdkIHPTop    / 'libs.tech' / 'verilog-a'
     klayoutTech    = pdkIHPTop    / 'libs.tech' / 'klayout'
     klayoutHome    = Path().home() / '.klayout'
     kdrcRulesMin   = klayoutTech  / 'tech' / 'drc' / 'sg13g2_minimal.lydrc'
@@ -81,6 +84,8 @@ def setup ( checkToolkit=None ):
     shellEnv[ 'MBK_CATA_LIB' ] = shellEnv[ 'MBK_CATA_LIB' ] + ':' + spiceCells.as_posix()
     shellEnv.export()
 
+    Iverilog.setStdCellLib( stdCellLibVlog )
+
     Klayout.setLypFile( lypFile )
     DRC.setDrcRules( kdrcRulesMin, DRC.Minimal )
     DRC.setDrcRules( kdrcRulesMax, DRC.Maximal )
@@ -96,7 +101,7 @@ def setup ( checkToolkit=None ):
     TasYagle.flags         = TasYagle.Transistor
     TasYagle.SpiceType     = 'hspice'
     TasYagle.SpiceTrModel  = [ 'mos_tt.lib' ]
-    TasYagle.OSDIdll       = ngspiceTech / 'openvaf' / 'psp103_nqs.osdi'
+    TasYagle.OSDIdll       = verilogATech / 'psp103' / 'psp103_nqs.osdi'
     TasYagle.MBK_CATA_LIB  = '.:' + (ngspiceTech / 'models').as_posix() \
                            + ':' + (pdkMasterTop).as_posix() \
                            + ':' + (pdkMasterTop/'libs.ref'/'StdCellLib'/'spice').as_posix()

@@ -54,14 +54,14 @@ def _routing():
     via = tech.getLayer('Metal3_Via3_Metal4')
     setEnclosures(via, metal, (u(0.05), u(0.05)))
     via = tech.getLayer('Metal4_Via4_Metal5')
-    setEnclosures(via, metal, (u(0.125), u(0.05)))
+    setEnclosures(via, metal, (u(0.005), u(0.05)))
     rg.addLayerGauge(CRL.RoutingLayerGauge.create(
         metal, CRL.RoutingLayerGauge.Horizontal, CRL.RoutingLayerGauge.Default, 3, 0.0,
         u(0.0), u(0.5), u(0.29), u(0.2), u(0.19), u(0.21),
     ))
     metal = tech.getLayer('Metal5')
     via = tech.getLayer('Metal4_Via4_Metal5')
-    setEnclosures(via, metal, (u(0.125), u(0.05)))
+    setEnclosures(via, metal, (u(0.1), u(0.05)))
     via = tech.getLayer('Metal5_TopVia1_TopMetal1')
     setEnclosures(via, metal, (u(0.01), u(0.74)))
     rg.addLayerGauge(CRL.RoutingLayerGauge.create(
@@ -173,6 +173,7 @@ def _routing():
     with CfgCache(priority=Cfg.Parameter.Priority.ConfigurationFile) as cfg:
         cfg.viewer.minimumSize = 500
         cfg.viewer.pixelThreshold = 10
+        cfg.block.upperEastWestPins = False 
         cfg.chip.block.rails.count = 5
         cfg.chip.block.rails.hWidth = u(2.68)
         cfg.chip.block.rails.vWidth = u(2.68)
