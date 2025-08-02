@@ -4,7 +4,7 @@ import subprocess
 from   pathlib                     import Path
 from   doit.exceptions             import TaskFailed
 from   coriolis.designflow.task    import FlowTask, ShellEnv
-from   coriolis.designflow.klayout import Klayout
+from   coriolis.designflow.klayout import Klayout, ShowDRC
 
 
 class BadSealRingScript ( Exception ): pass
@@ -14,9 +14,10 @@ class BadDrcRulesFlags  ( Exception ): pass
 
 class DRC ( Klayout ):
 
-    Minimal = 0x0001
-    Maximal = 0x0002
-    C4M     = 0x0004
+    Minimal     = 0x0001
+    Maximal     = 0x0002
+    C4M         = 0x0004
+    SHOW_ERRORS = 0x0800
 
     _drcRulesC4M     = None
     _drcRulesMinimal = None
@@ -61,7 +62,7 @@ class DRC ( Klayout ):
         variables = {}
         arguments = [ '-zz' ]
         depends   = FlowTask._normFileList( depends )
-        targets   = [ depends[0].with_suffix('.kdrc-report-{}.txt'.format(tag)) ]
+        targets   = [ depends[0].with_suffix('.drc_{}.lyrdb'.format(tag)) ]
         if not rules:
             raise ErrorMessage( 1, 'DRC.doTask(): No DRC rules defined for "{}".'.format( tag ))
         if flags & (DRC.Minimal | DRC.Maximal):
@@ -76,3 +77,23 @@ class DRC ( Klayout ):
                   , 'REPORT_FILE' : targets[0].as_posix()
                   }
         super().__init__( rule, targets, depends, rules, arguments, variables, env, flags )
+
+    def doTask ( self ):
+        from coriolis.helpers.io import ErrorMessage
+
+        shellEnv = ShellEnv()
+        for variable, value in self.env.items():
+            shellEnv[ variable ] = value
+        shellEnv.export()
+        state = subprocess.run( self.command )
+        if state.returncode:
+            e = ErrorMessage( 1, 'Klayout.doTask(): UNIX command failed ({}).' \
+                                 .format( state.returncode ))
+            return TaskFailed( e )
+        state = subprocess.run( [ 'grep', '--count', 'polygon', self.file_target(0).as_posix() ]  )
+        if not state.returncode:
+            if self.flags & DRC.SHOW_ERRORS:
+                showdrc = ShowDRC( self.basename+'_show', self.file_depend(0), self.file_target(0) )
+                subprocess.run( showdrc.command )
+            return False
+        return self.checkTargets( 'Klayout.doTask' )
