@@ -267,7 +267,7 @@ def _setup_techno():
         size=u(0.19), spacing=u(0.22), gds2Layer=19, gds2DataType=23,
     )
 
-    createBL(
+    metal2 = createBL(
         tech, 'Metal2', BasicLayer.Material.metal,
         size=u(0.2), spacing=u(0.21), area=0.144, gds2Layer=10, gds2DataType=0,
     )
@@ -297,7 +297,7 @@ def _setup_techno():
         size=u(0.19), spacing=u(0.22), gds2Layer=29, gds2DataType=23
     )
 
-    createBL(
+    metal3 =createBL(
         tech, 'Metal3', BasicLayer.Material.metal,
         size=u(0.2), spacing=u(0.21), area=0.144, gds2Layer=30, gds2DataType=0,
     )
@@ -327,7 +327,7 @@ def _setup_techno():
         size=u(0.19), spacing=u(0.22), gds2Layer=49, gds2DataType=23,
     )
 
-    createBL(
+    metal4 =createBL(
         tech, 'Metal4', BasicLayer.Material.metal,
         size=u(0.2), spacing=u(0.21), area=0.144, gds2Layer=50, gds2DataType=0,
     )
@@ -357,7 +357,7 @@ def _setup_techno():
         size=u(0.19), spacing=u(0.22), gds2Layer=66, gds2DataType=23,
     )
 
-    createBL(
+    metal5 = createBL(
         tech, 'Metal5', BasicLayer.Material.metal,
         size=u(0.2), spacing=u(0.21), area=0.144, gds2Layer=67, gds2DataType=0,
     )
@@ -656,6 +656,34 @@ def _setup_techno():
     createBL(
         tech, 'gmetalv', BasicLayer.Material.metal,
     )
+
+    metal2.setMinimalSpacing( u( 0.24)   # Min. spacing.
+                            , u( 0.39)   # With.
+                            , u( 1.0 ) ) # Parallel run length.
+    metal2.setMinimalSpacing( u( 0.60)   # Min. spacing.
+                            , u(10.0 )   # With.
+                            , u(10.0 ) ) # Parallel run length.
+    #metal2.printSpacingTable()
+    #print( 'Minimal spacing={}'.format( DbU.getValueString( metal2.getMinimalSpacing() )))
+    metal3.setMinimalSpacing( u( 0.24)   # Min. spacing.
+                            , u( 0.39)   # With.
+                            , u( 1.0 ) ) # Parallel run length.
+    metal3.setMinimalSpacing( u( 0.60)   # Min. spacing.
+                            , u(10.0 )   # With.
+                            , u(10.0 ) ) # Parallel run length.
+    metal4.setMinimalSpacing( u( 0.24)   # Min. spacing.
+                            , u( 0.39)   # With.
+                            , u( 1.0 ) ) # Parallel run length.
+    metal4.setMinimalSpacing( u( 0.60)   # Min. spacing.
+                            , u(10.0 )   # With.
+                            , u(10.0 ) ) # Parallel run length.
+    metal5.setMinimalSpacing( u( 0.24)   # Min. spacing.
+                            , u( 0.39)   # With.
+                            , u( 1.0 ) ) # Parallel run length.
+    metal5.setMinimalSpacing( u( 0.60)   # Min. spacing.
+                            , u(10.0 )   # With.
+                            , u(10.0 ) ) # Parallel run length.
+
 
     # Resistors
     # ResistorLayer.create(tech, 'Rppd', 'GatPoly', 'SalBlock')
