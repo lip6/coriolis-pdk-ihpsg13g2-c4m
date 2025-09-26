@@ -226,6 +226,7 @@ def _loadIoLib ( pdkDir ):
     ioLib     = Library.create( rootlib, 'iolib'   )
     ioLibGds  = Library.create( ioLib  , 'GDS'     )
     ioLibBond = Library.create( ioLib  , 'GDSBond' )
+    io.vprint( 1, '  o  Setup IHP sg13g2 I/O library in {}.'.format( ioLib.getName() ))
     LefImport.setMergeLibrary( ioLib )
     LefImport.setGdsForeignLibrary( ioLibGds )
     Gds.load( ioLibGds
@@ -238,7 +239,6 @@ def _loadIoLib ( pdkDir ):
                             / 'sg13g2_stdcell'
                             / 'lef'
                             / 'sg13g2_tech.lef').as_posix() )
-    io.vprint( 1, '  o  Setup IHP sg13g2 I/O library in {}.'.format( ioLib.getName() ))
     LefImport.load(  (cellsDir / 'lef' / 'sg13g2_io.lef').as_posix() )
     for cell in ioLib.getCells():
         shiftAbTo00( cell )
@@ -246,8 +246,8 @@ def _loadIoLib ( pdkDir ):
     bondPadCell = ioLibBond.getCell( 'bondpad' )
     if bondPadCell:
         assembleIoPads( ioLib )
-    af.wrapLibrary( ioLib    , 1 ) 
-    af.wrapLibrary( ioLibBond, 2 ) 
+    af.wrapLibrary( ioLib    , AllianceFramework.AppendLibrary ) 
+    af.wrapLibrary( ioLibBond, AllianceFramework.AppendLibrary ) 
 
 
 def setup ( pdkDir ):

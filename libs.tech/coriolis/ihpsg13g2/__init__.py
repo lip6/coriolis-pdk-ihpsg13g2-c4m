@@ -31,6 +31,7 @@ def setup ( checkToolkit=None ):
     from .techno                      import setup as techno_setup 
     from .StdCellLib                  import setup as StdCellLib_setup
     from .StdCell3V3Lib               import setup as StdCell3V3Lib_setup
+    from .sramlib                     import setup as sram_setup
     from .iolib                       import setup as io_setup
     
     with overlay.CfgCache(priority=Cfg.Parameter.Priority.UserFile) as cfg:
@@ -51,6 +52,7 @@ def setup ( checkToolkit=None ):
 
     techno_setup()
     StdCellLib_setup()
+    sram_setup( pdkIHPTop )
     io_setup( pdkIHPTop )
 
     liberty        = pdkMasterTop / 'libs.ref' / 'StdCellLib' / 'liberty' / 'StdCellLib_nom.lib'

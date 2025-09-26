@@ -39066,7 +39066,7 @@ def _load():
             Instance.PlacementStatus.PLACED,
         )
 
-    af.wrapLibrary(lib, 0)
+    af.wrapLibrary(lib, CRL.AllianceFramework.AppendLibrary)
 
     return lib
 
