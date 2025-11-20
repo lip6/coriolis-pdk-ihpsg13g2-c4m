@@ -143,93 +143,22 @@ class CoreToChip ( BaseCoreToChip ):
         return cell
 
     def _buildAllGroundPads ( self, ioPadConf ):
-        coreNet   = self.core  .getNet( ioPadConf.coreSupplyNetName )
-        coronaNet = self.corona.getNet( ioPadConf.coreSupplyNetName )
-        chipNet   = self.chip  .getNet( ioPadConf.coreSupplyNetName )
-        padNet    = self.chip  .getNet( ioPadConf.padSupplyNetName  )
-        if not coronaNet:
-            coronaNet = Net.create( self.corona, ioPadConf.coreSupplyNetName )
-            coronaNet.setExternal( True )
-            coronaNet.setGlobal  ( True )
-            coronaNet.setType    ( Net.Type.GROUND )
-            self.icore.getPlug( coreNet ).setNet( coronaNet  )
-        if not chipNet:
-            chipNet = Net.create( self.chip, ioPadConf.coreSupplyNetName )
-            chipNet.setExternal( True )
-            chipNet.setType    ( Net.Type.GROUND )
-        if not padNet:
-            padNet = Net.create( self.chip, ioPadConf.padSupplyNetName )
-            padNet.setExternal( True )
-            padNet.setType    ( Net.Type.GROUND )
-        coronaPlug = self.icorona.getPlug( coronaNet )
-        if not coronaPlug.getNet():
-            coronaPlug.setNet( chipNet  )
-        self.ringNetNames['iovss' ] = padNet
-        self.ringNetNames[  'vss' ] = chipNet
-        ioPadConf.pads.append( Instance.create( self.chip
-                                              , 'p_vss_{}'.format(ioPadConf.index)
-                                              , self.getCell(self.ioPadNames['vss']) ) )
-        self._connect( ioPadConf.pads[0], chipNet,   'vss' )
-        self._connect( ioPadConf.pads[0], padNet , 'iovss' )
-        self.groundPadCount += 1
-        self.chipPads       += ioPadConf.pads
-        ioPadConf.pads.append( Instance.create( self.chip
-                                              , 'p_iovss_{}'.format(ioPadConf.index)
-                                              , self.getCell(self.ioPadNames['iovss']) ) )
-        self._connect( ioPadConf.pads[0], chipNet,   'vss' )
-        self._connect( ioPadConf.pads[0], padNet , 'iovss' )
-        self.groundPadCount += 1
-        self.chipPads       += ioPadConf.pads
-
-    def _buildAllPowerPads ( self, ioPadConf ):
-        trace( 550, ',+', '\tsg13g2io.CoreToChip()\n' )
-        trace( 550, '\tcoreSupplyNetName="{}"\n'.format( ioPadConf.coreSupplyNetName ))
-        trace( 550, '\tpadSupplyNetName ="{}"\n'.format( ioPadConf.padSupplyNetName ))
-        coreNet   = self.core  .getNet( ioPadConf.coreSupplyNetName )
-        coronaNet = self.corona.getNet( ioPadConf.coreSupplyNetName )
-        chipNet   = self.chip  .getNet( ioPadConf.coreSupplyNetName )
-        padNet    = self.chip  .getNet( ioPadConf.padSupplyNetName  )
-        if not coronaNet:
-            coronaNet = Net.create( self.corona, ioPadConf.coreSupplyNetName )
-            coronaNet.setExternal( True )
-            coronaNet.setGlobal  ( True )
-            coronaNet.setType    ( Net.Type.POWER )
-            self.icore.getPlug( coreNet ).setNet( coronaNet  )
-        if not chipNet:
-            chipNet = Net.create( self.chip, ioPadConf.coreSupplyNetName )
-            chipNet.setExternal( True )
-            chipNet.setType    ( Net.Type.POWER )
-            self.icorona.getPlug( coronaNet ).setNet( chipNet  )
-        trace( 550, '\tchipNet ="{}"\n'.format( chipNet ))
-        if not padNet:
-            padNet = Net.create( self.chip, ioPadConf.padSupplyNetName )
-            padNet.setExternal( True )
-            padNet.setType    ( Net.Type.POWER )
-        self.ringNetNames['iovdd'] = padNet
-        self.ringNetNames[  'vdd'] = chipNet
-        trace( 550, '\tpadNet ="{}"\n'.format( padNet ))
-        trace( 550, '\tI/O vdd ="{}"\n'.format( self.getCell(self.ioPadNames['vdd']) ))
-        ioPadConf.pads.append( Instance.create( self.chip
-                                              , 'p_vdd_{}'.format(ioPadConf.index)
-                                              , self.getCell(self.ioPadNames['vdd']) ) )
-        self._connect( ioPadConf.pads[0], chipNet,   'vdd' )
-        self._connect( ioPadConf.pads[0], padNet , 'iovss' )
-        self.powerPadCount += 1
-        self.chipPads      += ioPadConf.pads
-        trace( 550, '\tI/O IO vdd ="{}"\n'.format( self.getCell(self.ioPadNames['iovdd']) ))
-        ioPadConf.pads.append( Instance.create( self.chip
-                                              , 'p_iovdd_{}'.format(ioPadConf.index)
-                                              , self.getCell(self.ioPadNames['iovdd']) ) )
-        self._connect( ioPadConf.pads[0], chipNet,   'vdd' )
-        self._connect( ioPadConf.pads[0], padNet , 'iovss' )
-        self.powerPadCount += 1
-        self.chipPads      += ioPadConf.pads
+        trace( 550, ',+', '\tsg13g2io.CoreToChip._buildAllGroundPads()\n' )
+        self._buildCoreGroundPads( ioPadConf )
+        self._buildIoGroundPads  ( ioPadConf )
         trace( 550, '-,' )
 
-   #def _buildCoreGroundPads ( self, ioPadConf ):
+    def _buildAllPowerPads ( self, ioPadConf ):
+        trace( 550, ',+', '\tsg13g2io.CoreToChip._buildAllGroundPads()\n' )
+        self._buildCorePowerPads( ioPadConf )
+        self._buildIoPowerPads  ( ioPadConf )
+        trace( 550, '-,' )
+        
+   #def _buildAllGroundPads ( self, ioPadConf ):
    #    coreNet   = self.core  .getNet( ioPadConf.coreSupplyNetName )
    #    coronaNet = self.corona.getNet( ioPadConf.coreSupplyNetName )
    #    chipNet   = self.chip  .getNet( ioPadConf.coreSupplyNetName )
+   #    padNet    = self.chip  .getNet( ioPadConf.padSupplyNetName  )
    #    if not coronaNet:
    #        coronaNet = Net.create( self.corona, ioPadConf.coreSupplyNetName )
    #        coronaNet.setExternal( True )
@@ -240,35 +169,38 @@ class CoreToChip ( BaseCoreToChip ):
    #        chipNet = Net.create( self.chip, ioPadConf.coreSupplyNetName )
    #        chipNet.setExternal( True )
    #        chipNet.setType    ( Net.Type.GROUND )
-   #    coronaPlug = self.icorona.getPlug( coronaNet )
-   #    if not coronaPlug.getNet():
-   #        coronaPlug.setNet( chipNet  )
-   #    self.ringNetNames['vss'] = chipNet
-   #    ioPadConf.pads.append( Instance.create( self.chip
-   #                                          , 'p_vss_{}'.format(ioPadConf.index)
-   #                                          , self.getCell(self.ioPadNames['vss']) ) )
-   #    self._connect( ioPadConf.pads[0], chipNet, 'vss' )
-   #    self.groundPadCount += 1
-   #    self.chipPads       += ioPadConf.pads
-   #
-   #def _buildIoGroundPads ( self, ioPadConf ):
-   #    padNet = self.chip.getNet( ioPadConf.padSupplyNetName  )
    #    if not padNet:
    #        padNet = Net.create( self.chip, ioPadConf.padSupplyNetName )
    #        padNet.setExternal( True )
    #        padNet.setType    ( Net.Type.GROUND )
-   #    self.ringNetNames['iovss'] = padNet
+   #    coronaPlug = self.icorona.getPlug( coronaNet )
+   #    if not coronaPlug.getNet():
+   #        coronaPlug.setNet( chipNet  )
+   #    self.ringNetNames['iovss' ] = padNet
+   #    self.ringNetNames[  'vss' ] = chipNet
+   #    ioPadConf.pads.append( Instance.create( self.chip
+   #                                          , 'p_vss_{}'.format(ioPadConf.index)
+   #                                          , self.getCell(self.ioPadNames['vss']) ) )
+   #    self._connect( ioPadConf.pads[0], chipNet,   'vss' )
+   #    self._connect( ioPadConf.pads[0], padNet , 'iovss' )
+   #    self.groundPadCount += 1
+   #    self.chipPads       += ioPadConf.pads
    #    ioPadConf.pads.append( Instance.create( self.chip
    #                                          , 'p_iovss_{}'.format(ioPadConf.index)
    #                                          , self.getCell(self.ioPadNames['iovss']) ) )
+   #    self._connect( ioPadConf.pads[0], chipNet,   'vss' )
    #    self._connect( ioPadConf.pads[0], padNet , 'iovss' )
    #    self.groundPadCount += 1
    #    self.chipPads       += ioPadConf.pads
    #
-   #def _buildCorePowerPads ( self, ioPadConf ):
+   #def _buildAllPowerPads ( self, ioPadConf ):
+   #    trace( 550, ',+', '\tsg13g2io.CoreToChip._buildAllPowerpads()\n' )
+   #    trace( 550, '\tcoreSupplyNetName="{}"\n'.format( ioPadConf.coreSupplyNetName ))
+   #    trace( 550, '\tpadSupplyNetName ="{}"\n'.format( ioPadConf.padSupplyNetName ))
    #    coreNet   = self.core  .getNet( ioPadConf.coreSupplyNetName )
    #    coronaNet = self.corona.getNet( ioPadConf.coreSupplyNetName )
    #    chipNet   = self.chip  .getNet( ioPadConf.coreSupplyNetName )
+   #    padNet    = self.chip  .getNet( ioPadConf.padSupplyNetName  )
    #    if not coronaNet:
    #        coronaNet = Net.create( self.corona, ioPadConf.coreSupplyNetName )
    #        coronaNet.setExternal( True )
@@ -280,27 +212,107 @@ class CoreToChip ( BaseCoreToChip ):
    #        chipNet.setExternal( True )
    #        chipNet.setType    ( Net.Type.POWER )
    #        self.icorona.getPlug( coronaNet ).setNet( chipNet  )
-   #        self.ringNetNames['vdd'] = chipNet
-   #    ioPadConf.pads.append( Instance.create( self.chip
-   #                                          , 'p_vdd_{}'.format(ioPadConf.index)
-   #                                          , self.getCell(self.ioPadNames['vdd']) ) )
-   #    self._connect( ioPadConf.pads[0], chipNet, 'vdd' )
-   #    self.powerPadCount += 1
-   #    self.chipPads      += ioPadConf.pads
-   #
-   #def _buildIoPowerPads ( self, ioPadConf ):
-   #    padNet = self.chip  .getNet( ioPadConf.padSupplyNetName  )
+   #    trace( 550, '\tchipNet ="{}"\n'.format( chipNet ))
    #    if not padNet:
    #        padNet = Net.create( self.chip, ioPadConf.padSupplyNetName )
    #        padNet.setExternal( True )
    #        padNet.setType    ( Net.Type.POWER )
-   #        self.ringNetNames['iovdd'] = padNet
+   #    self.ringNetNames['iovdd'] = padNet
+   #    self.ringNetNames[  'vdd'] = chipNet
+   #    trace( 550, '\tpadNet ="{}"\n'.format( padNet ))
+   #    trace( 550, '\tI/O vdd ="{}"\n'.format( self.getCell(self.ioPadNames['vdd']) ))
+   #    ioPadConf.pads.append( Instance.create( self.chip
+   #                                          , 'p_vdd_{}'.format(ioPadConf.index)
+   #                                          , self.getCell(self.ioPadNames['vdd']) ) )
+   #    self._connect( ioPadConf.pads[0], chipNet,   'vdd' )
+   #    self._connect( ioPadConf.pads[0], padNet , 'iovss' )
+   #    self.powerPadCount += 1
+   #    self.chipPads      += ioPadConf.pads
+   #    trace( 550, '\tI/O IO vdd ="{}"\n'.format( self.getCell(self.ioPadNames['iovdd']) ))
    #    ioPadConf.pads.append( Instance.create( self.chip
    #                                          , 'p_iovdd_{}'.format(ioPadConf.index)
    #                                          , self.getCell(self.ioPadNames['iovdd']) ) )
-   #    self._connect( ioPadConf.pads[0], padNet , 'iovdd' )
+   #    self._connect( ioPadConf.pads[0], chipNet,   'vdd' )
+   #    self._connect( ioPadConf.pads[0], padNet , 'iovss' )
    #    self.powerPadCount += 1
    #    self.chipPads      += ioPadConf.pads
+   #    trace( 550, '-,' )
+
+    def _buildCoreGroundPads ( self, ioPadConf ):
+        coreNet   = self.core  .getNet( ioPadConf.coreSupplyNetName )
+        coronaNet = self.corona.getNet( ioPadConf.coreSupplyNetName )
+        chipNet   = self.chip  .getNet( ioPadConf.coreSupplyNetName )
+        if not coronaNet:
+            coronaNet = Net.create( self.corona, ioPadConf.coreSupplyNetName )
+            coronaNet.setExternal( True )
+            coronaNet.setGlobal  ( True )
+            coronaNet.setType    ( Net.Type.GROUND )
+            self.icore.getPlug( coreNet ).setNet( coronaNet  )
+        if not chipNet:
+            chipNet = Net.create( self.chip, ioPadConf.coreSupplyNetName )
+            chipNet.setExternal( True )
+            chipNet.setType    ( Net.Type.GROUND )
+        coronaPlug = self.icorona.getPlug( coronaNet )
+        if not coronaPlug.getNet():
+            coronaPlug.setNet( chipNet  )
+        self.ringNetNames['vss'] = chipNet
+        ioPadConf.pads.append( Instance.create( self.chip
+                                              , 'p_vss_{}'.format(ioPadConf.index)
+                                              , self.getCell(self.ioPadNames['vss']) ) )
+        self._connect( ioPadConf.pads[0], chipNet, 'vss' )
+        self.groundPadCount += 1
+        self.chipPads       += ioPadConf.pads
+    
+    def _buildIoGroundPads ( self, ioPadConf ):
+        padNet = self.chip.getNet( ioPadConf.padSupplyNetName  )
+        if not padNet:
+            padNet = Net.create( self.chip, ioPadConf.padSupplyNetName )
+            padNet.setExternal( True )
+            padNet.setType    ( Net.Type.GROUND )
+        self.ringNetNames['iovss'] = padNet
+        ioPadConf.pads.append( Instance.create( self.chip
+                                              , 'p_iovss_{}'.format(ioPadConf.index)
+                                              , self.getCell(self.ioPadNames['iovss']) ) )
+        self._connect( ioPadConf.pads[0], padNet , 'iovss' )
+        self.groundPadCount += 1
+        self.chipPads       += ioPadConf.pads
+    
+    def _buildCorePowerPads ( self, ioPadConf ):
+        coreNet   = self.core  .getNet( ioPadConf.coreSupplyNetName )
+        coronaNet = self.corona.getNet( ioPadConf.coreSupplyNetName )
+        chipNet   = self.chip  .getNet( ioPadConf.coreSupplyNetName )
+        if not coronaNet:
+            coronaNet = Net.create( self.corona, ioPadConf.coreSupplyNetName )
+            coronaNet.setExternal( True )
+            coronaNet.setGlobal  ( True )
+            coronaNet.setType    ( Net.Type.POWER )
+            self.icore.getPlug( coreNet ).setNet( coronaNet  )
+        if not chipNet:
+            chipNet = Net.create( self.chip, ioPadConf.coreSupplyNetName )
+            chipNet.setExternal( True )
+            chipNet.setType    ( Net.Type.POWER )
+            self.icorona.getPlug( coronaNet ).setNet( chipNet  )
+            self.ringNetNames['vdd'] = chipNet
+        ioPadConf.pads.append( Instance.create( self.chip
+                                              , 'p_vdd_{}'.format(ioPadConf.index)
+                                              , self.getCell(self.ioPadNames['vdd']) ) )
+        self._connect( ioPadConf.pads[0], chipNet, 'vdd' )
+        self.powerPadCount += 1
+        self.chipPads      += ioPadConf.pads
+    
+    def _buildIoPowerPads ( self, ioPadConf ):
+        padNet = self.chip  .getNet( ioPadConf.padSupplyNetName  )
+        if not padNet:
+            padNet = Net.create( self.chip, ioPadConf.padSupplyNetName )
+            padNet.setExternal( True )
+            padNet.setType    ( Net.Type.POWER )
+            self.ringNetNames['iovdd'] = padNet
+        ioPadConf.pads.append( Instance.create( self.chip
+                                              , 'p_iovdd_{}'.format(ioPadConf.index)
+                                              , self.getCell(self.ioPadNames['iovdd']) ) )
+        self._connect( ioPadConf.pads[0], padNet , 'iovdd' )
+        self.powerPadCount += 1
+        self.chipPads      += ioPadConf.pads
 
     def _buildClockPads ( self, ioPadConf ):
         """For "LibreSOCIO" there is no specialized clock I/O pad. So do nothing."""

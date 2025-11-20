@@ -200,6 +200,8 @@ def _routing ():
         cfg.chip.block.rails.hSpacing = u( 6.0)
         cfg.chip.block.rails.vSpacing = u( 6.0)
         cfg.chip.padCoreSide          = 'North'
+        cfg.chip.ioPadGauge           = 'LEF.IO_Site'
+        cfg.chip.useAbstractPads      = False
     af = AllianceFramework.get()
     cg = CellGauge.create( 'LEF.IO_Site'
                          , 'Metal2'  # pin layer name.
@@ -241,6 +243,10 @@ def _loadIoLib ( pdkDir ):
                             / 'sg13g2_tech.lef').as_posix() )
     LefImport.load(  (cellsDir / 'lef' / 'sg13g2_io.lef').as_posix() )
     for cell in ioLib.getCells():
+        if cell.getName() == 'sg13g2_IOPadIn':
+            padNet = cell.getNet( 'pad' )
+            if padNet:
+                padNet.setDirection( Net.Direction.IN )
         shiftAbTo00( cell )
     filler5Cell = ioLib.getCell( 'sg13g2_Filler1000' )
     bondPadCell = ioLibBond.getCell( 'bondpad' )
