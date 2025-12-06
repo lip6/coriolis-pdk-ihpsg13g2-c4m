@@ -27,7 +27,10 @@
  fi
 
  PYTHON_BIN="/usr/bin/python3"
- if [ -x "/usr/bin/python3.11" ]; then PYTHON_BIN="/usr/bin/python3.11"; fi
+ PYTHON_MINOR=`$PYTHON_BIN -c 'import sys; print("{0.minor}".format(sys.version_info))'`
+ if [ ${PYTHON_MINOR} -lt 11 ]; then
+   if [ -x "/usr/bin/python3.11" ]; then PYTHON_BIN="/usr/bin/python3.11"; fi
+ fi
  PYTHON_VERSION=`$PYTHON_BIN -c 'import sys; print("python{0.major}.{0.minor}".format(sys.version_info))'`
  echo "* Updating venv path to ${VIRTUAL_ENV}"
  sed -i "s,VIRTUAL_ENV=.*,VIRTUAL_ENV=\"${VIRTUAL_ENV}\","   .venv/bin/activate

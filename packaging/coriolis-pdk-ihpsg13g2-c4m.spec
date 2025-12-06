@@ -1,11 +1,24 @@
-%global python3_pkgversion 3.11
-%if 0%{?rhel} >= 9 || 0%{?fedora} >= 39
+
 %global python3_pkgversion 3
+
+%if 0%{?rhel} && 0%{?rhel} < 9
+%global python3_pkgversion 3.11
 %endif
+
+%if 0%{?fedora} && 0%{?fedora} < 39
+%global python3_pkgversion 3.11
+%endif
+
 %if 0%{?is_opensuse}
+%global _pyproject_wheeldir %{_builddir}/coriolis-pdk-ihpsg13g2-%{version}/build
+%if 0%{?sle_version} == 150600
 %global python3_pkgversion 311
+%global python3_sitearch /usr/lib64/python3.11/site-packages
 %endif
+%endif
+
 %global         dateVersion    2024.10.15
+
 
 Name:           coriolis-pdk-ihpsg13g2-c4m
 Version:        %{dateVersion}
@@ -42,9 +55,6 @@ BuildRequires:  python%{python3_pkgversion}-wheel
 %endif
 
 %if 0%{?is_opensuse}
-%global _pyproject_wheeldir %{_builddir}/coriolis-pdk-ihpsg13g2-c4m-%{version}/build
-%global python3_sitearch /usr/lib64/python3.11/site-packages
-
 BuildRequires:  meson
 BuildRequires:  %{python_module devel}
 BuildRequires:  %{python_module setuptools}
