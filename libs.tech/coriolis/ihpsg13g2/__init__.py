@@ -58,14 +58,11 @@ def setup ( checkToolkit=None ):
     liberty        = pdkMasterTop / 'libs.ref' / 'StdCellLib' / 'liberty' / 'StdCellLib_nom.lib'
     stdCellLibVlog = pdkMasterTop / 'libs.ref' / 'StdCellLib' / 'verilog' / 'StdCellLib.v'
     spiceCells     = pdkMasterTop / 'libs.ref' / 'StdCellLib' / 'spice'
-   #kdrcRules      = pdkMasterTop / 'libs.tech' / 'klayout' / 'share' / 'C4M.IHPSG13G2.drc'
     ngspiceTech    = pdkIHPTop    / 'libs.tech' / 'ngspice'
     verilogATech   = pdkIHPTop    / 'libs.tech' / 'verilog-a'
     klayoutTech    = pdkIHPTop    / 'libs.tech' / 'klayout'
     klayoutHome    = Path().home() / '.klayout'
-    kdrcRulesMin   = klayoutTech  / 'tech' / 'drc' / 'sg13g2_minimal.lydrc'
-    kdrcRulesMax   = klayoutTech  / 'tech' / 'drc' / 'sg13g2_maximal.lydrc'
-    kdrcRulesC4M   = pdkMasterTop / 'libs.tech' / 'klayout' / 'tech' / 'C4M.IHPSG13G2' / 'drc' / 'DRC.lydrc'
+    kdrcScript     = klayoutTech  / 'tech' / 'drc' / 'run_drc.py'
     lypFile        = klayoutTech  / 'tech' / 'sg13g2.lyp'
     fillerScript   = klayoutTech  / 'tech' / 'scripts' / 'filler.py'
     sealRingScript = klayoutTech  / 'tech' / 'scripts' / 'sealring.py'
@@ -89,9 +86,7 @@ def setup ( checkToolkit=None ):
     Iverilog.setStdCellLib( stdCellLibVlog )
 
     Klayout.setLypFile( lypFile )
-    DRC.setDrcRules( kdrcRulesMin, DRC.Minimal )
-    DRC.setDrcRules( kdrcRulesMax, DRC.Maximal )
-    DRC.setDrcRules( kdrcRulesC4M, DRC.C4M )
+    DRC.setScript( kdrcScript )
     ShellEnv.CHECK_TOOLKIT = Where.checkToolkit.as_posix()
     ShellEnv.PDK_ROOT      = pdkIHPTop.parent.as_posix()
     ShellEnv.PDK           = 'ihpsg13g2'
@@ -103,7 +98,10 @@ def setup ( checkToolkit=None ):
     TasYagle.flags         = TasYagle.Transistor
     TasYagle.SpiceType     = 'hspice'
     TasYagle.SpiceTrModel  = [ 'mos_tt.lib' ]
-    TasYagle.OSDIdll       = verilogATech / 'psp103' / 'psp103_nqs.osdi'
+    TasYagle.OSDIdlls      = [ verilogATech / 'psp103' / 'psp103.osdi'
+                             , verilogATech / 'psp103' / 'psp103t.osdi'
+                             , verilogATech / 'psp103' / 'psp103_nqs.osdi'
+                             ]
     TasYagle.MBK_CATA_LIB  = '.:' + (ngspiceTech / 'models').as_posix() \
                            + ':' + (pdkMasterTop).as_posix() \
                            + ':' + (pdkMasterTop/'libs.ref'/'StdCellLib'/'spice').as_posix()

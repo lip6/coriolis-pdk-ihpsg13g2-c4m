@@ -39,8 +39,14 @@ class SealRing ( Klayout ):
         if not SealRing._script:
             raise ErrorMessage( 1, 'SealRing.doTask(): No script defined.' )
         env       = {}
-        variables = { 'output' : targets[0]
-                    , 'width'  : str(size[0])
-                    , 'height' : str(size[1])
+        variables = { 'output'   : targets[0]
+                    , 'width'    : str(size[0])
+                    , 'height'   : str(size[1])
+                    , 'offset_x' : '0.0'
+                    , 'offset_y' : '0.0'
                     }
         super().__init__( rule, targets, depends, SealRing._script, arguments, variables, env, flags )
+        self.addClean( [ 'sealring.vst'
+                       , 'sealring.spi'
+                       , 'sealring_top.vst'
+                       , 'sealring_top.spi' ] )
