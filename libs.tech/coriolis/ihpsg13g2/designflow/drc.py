@@ -67,7 +67,7 @@ class DRC ( FlowTask ):
         if self.flags & DRC.Antenna:       self.command += [ '--antenna' ]
         if self.flags & DRC.AntennaOnly:   self.command += [ '--antenna_only' ]
         if self.flags & DRC.NoOffgrid:     self.command += [ '--no_offgrid' ]
-        if self.flags & DRC.NoRecommanded: self.command += [ '--no_recommanded' ]
+        if self.flags & DRC.NoRecommended: self.command += [ '--no_recommended' ]
         self.addClean( self.targets )
         self.addCleanGlob( Path.cwd(), 'drc_run_*' )
         ShowDRC( 'showdrc', self.file_depend(0), self.file_target(0) )
