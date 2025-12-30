@@ -13,19 +13,18 @@ class BadDRCScript ( Exception ): pass
 
 class DRC ( FlowTask ):
 
-    SHOW_ERRORS   = 0x0001
-    FlatMode      = 0x0010
-    DeepMode      = 0x0010
-    PreCheckDRC   = 0x0010
-    NoFeol        = 0x0010
-    NoBeol        = 0x0020
-    NoDensity     = 0x0040
-    NoExtraRules  = 0x0040
-    NoOffgrid     = 0x0040
-    NoRecommended = 0x0040
-    DensityOnly   = 0x0040
-    Antenna       = 0x0040
-    AntennaOnly   = 0x0040
+    FlatMode      = 0x00010000
+    DeepMode      = 0x00020000
+    PreCheckDRC   = 0x00040000
+    NoFeol        = 0x00080000
+    NoBeol        = 0x00100000
+    NoDensity     = 0x00200000
+    NoExtraRules  = 0x00400000
+    NoOffgrid     = 0x00800000
+    NoRecommended = 0x01000000
+    DensityOnly   = 0x02000000
+    Antenna       = 0x04000000
+    AntennaOnly   = 0x08000000
 
     _script = None
 
@@ -87,7 +86,8 @@ class DRC ( FlowTask ):
         drcRunDirs.sort( key=lambda runDir : runDir.stat().st_mtime, reverse=True )
         if drcRunDirs:
             latestLyrdb = self.file_target(0)
-            if latestLyrdb.exists(): latestLyrdb.unlink()
+            if latestLyrdb.is_symlink():
+                latestLyrdb.unlink()
             latestLyrdb.symlink_to( drcRunDirs[0] / latestLyrdb.name )
         if state.returncode:
             e = ErrorMessage( 1, 'DRC.doTask(): UNIX command failed ({}).' \
