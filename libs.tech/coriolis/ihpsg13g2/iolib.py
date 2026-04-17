@@ -229,6 +229,7 @@ def _loadIoLib ( pdkDir ):
     ioLibGds  = Library.create( ioLib  , 'GDS'     )
     ioLibBond = Library.create( ioLib  , 'GDSBond' )
     io.vprint( 1, '  o  Setup IHP sg13g2 I/O library in {}.'.format( ioLib.getName() ))
+    LefImport.reset()
     LefImport.setMergeLibrary( ioLib )
     LefImport.setGdsForeignLibrary( ioLibGds )
     Gds.load( ioLibGds

@@ -29,6 +29,7 @@ def _loadSramLib ( pdkDir ):
     sramLib    = Library.create( rootlib, 'sramlib'   )
     sramLibGds = Library.create( sramLib, 'GDS'     )
     io.vprint( 1, '  o  Setup IHP sg13g2 SRAM library in {}.'.format( sramLib.getName() ))
+    LefImport.reset()
     LefImport.setMergeLibrary( sramLib )
     LefImport.setGdsForeignLibrary( sramLibGds )
     Gds.load( sramLibGds
