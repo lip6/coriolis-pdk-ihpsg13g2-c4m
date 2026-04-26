@@ -79,7 +79,7 @@ class DRC ( FlowTask ):
 
         print( '   -> Run "{}"'.format( ' '.join(self.command) ))
         shellEnv = ShellEnv()
-        shellEnv[ 'PYTHONPATH' ] = '/usr/lib64/klayout/pymod'
+        shellEnv[ 'PYTHONPATH' ] = '/usr/lib64/klayout/pymod:/usr/lib/klayout/pymod'
         shellEnv.export()
         state      = subprocess.run( self.command )
         drcRunDirs = [runDir for runDir in Path.cwd().glob( 'drc_run_*' )]
