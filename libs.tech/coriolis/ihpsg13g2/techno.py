@@ -15,127 +15,171 @@ from coriolis.technos.common.patterns import toHexa
 from coriolis.helpers import u
 from coriolis.helpers.technology import createBL, createVia
 from coriolis.helpers.overlay import CfgCache
-from coriolis.helpers.analogtechno import Length, Area, Unit, Asymmetric, loadAnalogTechno
+from coriolis.helpers.analogtechno import Length, Area, Unit, Asymmetric, addDevice, loadAnalogTechno
 
 __all__ = ["analogTechnologyTable", "setup"]
 
-analogTechnologyTable = (
-    ('Header', 'IHPSG13G2', DbU.UnitPowerMicro, 'alpha'),
-    ('PhysicalGrid', 0.005, Length, ''),
+analogTechnologyTable = \
+    ( ('Header', 'IHPSG13G2', DbU.UnitPowerMicro, 'rev.LIP6-1')
+    #
+    # Rules taken from SG13G2 Layout Rules Rev. 0.4 (SG13G2_os_layout_rules.pdf).
+    #
+    # ---------------------+-----------+------------+------------+------------------+------------
+    # ( Rule name          , [Layer1]  , [Layer2]   , Value      , Rule flags       , Reference )
+    , ('PhysicalGrid'                               , 0.005      , Length           , 'Sec. 3.1 p.15')
+    , ('transistorMinL'                             , 0.13       , Length           , 'Gat.a p.26')
+    , ('transistorMaxL'                             , 1.3        , Length           , 'Undefined')
+    , ('transistorMinW'                             , 0.7        , Length           , 'Gat.e p.26')
+    , ('transistorMaxW'                             , 7.0        , Length           , 'Undefined')
+                                                                
+    # NWell 5.1 p.18  -->  nWell                              
+    , ('minWidth'          , 'NWell'                , 0.62       , Length           , 'NW.a')
+    , ('minSpacing'        , 'NWell'                , 0.62       , Length           , 'NW.b')
+    , ('minEnclosure'      , 'NWell'   , 'Activ'    ,(0.31, 0.31), Length|Asymmetric, 'NW.c')
+    , ('minSpacing'        , 'NWell'   , 'Activ'    ,(0.31, 0.31), Length|Asymmetric, 'NW.d')
 
-    ('minWidth', 'NWell', 0.62, Length, ''),
-    ('minSpacing', 'NWell', 0.62, Length, ''),
-    ('minWidth', 'pSD', 0.31, Length, ''),
-    ('minSpacing', 'pSD', 0.31, Length, ''),
-    ('minArea', 'pSD', 0.25, Area, ''),
-    ('minWidth', 'ThickGateOx', 0.86, Length, ''),
-    ('minSpacing', 'ThickGateOx', 0.86, Length, ''),
-    ('minWidth', 'GatPoly', 0.13, Length, ''),
-    ('minSpacing', 'GatPoly', 0.18, Length, ''),
-    ('minArea', 'GatPoly', 0.09, Area, ''),
-    ('minWidth', 'Activ', 0.15, Length, ''),
-    ('minSpacing', 'Activ', 0.21, Length, ''),
-    ('minArea', 'Activ', 0.122, Area, ''),
-    ('minEnclosure', 'NWell', 'Activ', (0.31, 0.31), Length|Asymmetric, ''),
-    ('minSpacing', 'NWell', 'Activ',  (0.31, 0.31), Length|Asymmetric, ''),
-    # TODO for Activ:
-    #    allow_in_substrate, implant_abut, allow_contactless_implant, allow_well_crossing
-    ('minWidth', 'Metal1', 0.16, Length, ''),
-    ('minSpacing', 'Metal1', 0.18, Length, ''),
-    ('minArea', 'Metal1', 0.09, Area, ''),
-    ('minWidth', 'Metal2', 0.2, Length, ''),
-    ('minSpacing', 'Metal2', 0.21, Length, ''),
-    ('minArea', 'Metal2', 0.144, Area, ''),
-    ('minWidth', 'Metal3', 0.2, Length, ''),
-    ('minSpacing', 'Metal3', 0.21, Length, ''),
-    ('minArea', 'Metal3', 0.144, Area, ''),
-    ('minWidth', 'Metal4', 0.2, Length, ''),
-    ('minSpacing', 'Metal4', 0.21, Length, ''),
-    ('minArea', 'Metal4', 0.144, Area, ''),
-    ('minWidth', 'Metal5', 0.2, Length, ''),
-    ('minSpacing', 'Metal5', 0.21, Length, ''),
-    ('minArea', 'Metal5', 0.144, Area, ''),
-    ('minWidth', 'TopMetal1', 1.64, Length, ''),
-    ('minSpacing', 'TopMetal1', 1.64, Length, ''),
-    ('minWidth', 'TopMetal2', 2.0, Length, ''),
-    ('minSpacing', 'TopMetal2', 2.0, Length, ''),
-    ('minWidth', 'Cont', 0.16, Length, ''),
-    ('maxWidth', 'Cont', 0.16, Length, ''),
-    ('minSpacing', 'Cont', 0.18, Length, ''),
-    ('minEnclosure', 'Activ', 'Cont', (0.07, 0.07), Length|Asymmetric, ''),
-    ('minEnclosure', 'GatPoly', 'Cont', (0.07, 0.07), Length|Asymmetric, ''),
-    ('minEnclosure', 'Metal1', 'Cont', (0.0, 0.08), Length|Asymmetric, ''),
-    ('minWidth', 'Via1', 0.19, Length, ''),
-    ('maxWidth', 'Via1', 0.19, Length, ''),
-    ('minSpacing', 'Via1', 0.22, Length, ''),
-    ('minEnclosure', 'Metal1', 'Via1', (0.01, 0.05), Length|Asymmetric, ''),
-    ('minEnclosure', 'Metal2', 'Via1', (0.005, 0.05), Length|Asymmetric, ''),
-    ('minWidth', 'Via2', 0.19, Length, ''),
-    ('maxWidth', 'Via2', 0.19, Length, ''),
-    ('minSpacing', 'Via2', 0.22, Length, ''),
-    ('minEnclosure', 'Metal2', 'Via2', (0.005, 0.05), Length|Asymmetric, ''),
-    ('minEnclosure', 'Metal3', 'Via2', (0.005, 0.05), Length|Asymmetric, ''),
-    ('minWidth', 'Via3', 0.19, Length, ''),
-    ('maxWidth', 'Via3', 0.19, Length, ''),
-    ('minSpacing', 'Via3', 0.22, Length, ''),
-    ('minEnclosure', 'Metal3', 'Via3', (0.005, 0.05), Length|Asymmetric, ''),
-    ('minEnclosure', 'Metal4', 'Via3', (0.005, 0.05), Length|Asymmetric, ''),
-    ('minWidth', 'Via4', 0.19, Length, ''),
-    ('maxWidth', 'Via4', 0.19, Length, ''),
-    ('minSpacing', 'Via4', 0.22, Length, ''),
-    ('minEnclosure', 'Metal4', 'Via4', (0.005, 0.05), Length|Asymmetric, ''),
-    ('minEnclosure', 'Metal5', 'Via4', (0.005, 0.05), Length|Asymmetric, ''),
-    ('minWidth', 'TopVia1', 0.42, Length, ''),
-    ('maxWidth', 'TopVia1', 0.42, Length, ''),
-    ('minSpacing', 'TopVia1', 0.42, Length, ''),
-    ('minEnclosure', 'Metal5', 'TopVia1', (0.01, 0.01), Length|Asymmetric, ''),
-    ('minEnclosure', 'TopMetal1', 'TopVia1', (0.42, 0.42), Length|Asymmetric, ''),
-    ('minWidth', 'TopVia2', 0.9, Length, ''),
-    ('maxWidth', 'TopVia2', 0.9, Length, ''),
-    ('minSpacing', 'TopVia2', 1.06, Length, ''),
-    ('minEnclosure', 'TopMetal1', 'TopVia2', (0.5, 0.5), Length|Asymmetric, ''),
-    ('minEnclosure', 'TopMetal2', 'TopVia2', (0.5, 0.5), Length|Asymmetric, ''),
-    # ('minTransistorL', 'hvmosgate', 0.45, Length, ''),
-    # ('minTransistorW', 'hvmosgate', 0.3, Length, ''),
-    # ('minGateExtension', 'Activ', 'hvmosgate', 0.23, Length|Asymmetric, ''),
-    # ('minGateExtension', 'GatPoly', 'hvmosgate', 0.18, Length|Asymmetric, ''),
-    # ('minGateSpacing', 'hvmosgate', 0.25, Length, ''),
-    # ('minGateSpacing', 'Cont', 'hvmosgate', 0.11, Length|Asymmetric, ''),
-    # ('minGateExtension', 'Activ', 'lvmosgate', 0.23, Length|Asymmetric, ''),
-    # ('minGateExtension', 'GatPoly', 'lvmosgate', 0.18, Length|Asymmetric, ''),
-    # ('minGateSpacing', 'Cont', 'lvmosgate', 0.11, Length|Asymmetric, ''),
-    # ('minGateEnclosure', 'pSD', 'sg13g2_hv_pmos', (0.4, 0.4), Length|Asymmetric, ''),
-    # ('minGateEnclosure', 'pSD', 'sg13g2_lv_pmos', (0.3, 0.3), Length|Asymmetric, ''),
-    ('minWidth', 'Passiv', 40.0, Length, ''),
-    ('minSpacing', 'Passiv', 3.5, Length, ''),
-    ('minEnclosure', 'TopMetal2', 'Passiv', (2.1, 2.1), Length|Asymmetric, ''),
-    ('minWidth', 'EXTBlock', 0.31, Length, ''),
-    ('minSpacing', 'EXTBlock', 0.31, Length, ''),
-    ('minWidth', 'SalBlock', 0.42, Length, ''),
-    ('minSpacing', 'SalBlock', 0.42, Length, ''),
-    # ('minWidth', 'Rppd', 0.5, Length, ''),
-    # ('minSpacing', 'Rppd', 0.18, Length, ''),
-    # ('minEnclosure', 'SalBlock', 'GatPoly', 0.2, Length|Asymmetric, ''),
-    # ('minWidth', 'Rsil', 0.5, Length, ''),
-    # ('minSpacing', 'Rsil', 0.18, Length, ''),
-    # ('minEnclosure', 'RES', 'GatPoly', 0.0, Length|Asymmetric, ''),
-    # ('minWidth', 'pdiode', 0.48, Length, ''),
-    # ('minEnclosure', 'Recog.dio', 'Activ', (0.02, 0.02), Length|Asymmetric, ''),
-    # ('minWidth', 'ndiode', 0.48, Length, ''),
-    # ('minEnclosure', 'Recog.dio', 'Activ', (0.02, 0.02), Length|Asymmetric, ''),
-    ('minSpacing', 'EXTBlock', 'pSD', 0.31, Length|Asymmetric, ''),
-    ('minSpacing', 'Activ', 'ThickGateOx', 0.27, Length|Asymmetric, ''),
-    # ('minSpacing', 'gate:mosfet:sg13g2_lv_nmos', 'pSD', 0.3, Length|Asymmetric, ''),
-    # ('minSpacing', 'gate:mosfet:sg13g2_hv_nmos', 'pSD', 0.4, Length|Asymmetric, ''),
-    ('minSpacing', 'GatPoly', 'EXTBlock', 0.18, Length|Asymmetric, ''),
-    ('minSpacing', 'Activ', 'pSD', 0.18, Length|Asymmetric, ''),
-    ('minSpacing', 'SalBlock', 'Activ', 0.2, Length|Asymmetric, ''),
-    ('minSpacing', 'SalBlock', 'GatPoly', 0.2, Length|Asymmetric, ''),
-    ('minSpacing', 'SalBlock', 'Cont', 0.2, Length|Asymmetric, ''),
-    ('minSpacing', 'Activ', 'GatPoly', 0.07, Length|Asymmetric, ''),
-    ('minSpacing', 'Cont', 'Activ', 0.14, Length|Asymmetric, ''),
-    #('minSpacing', 'NWell', 'Activ', 0.24, Length|Asymmetric, ''),
-)
+    # Activ 5.5 p.23  -->  active
+    # TODO: allow_in_substrate, implant_abut, allow_contactless_implant, allow_well_crossing
+    , ('minWidth'          , 'Activ'                , 0.15       , Length           , 'Act.a')
+    , ('minSpacing'        , 'Activ'                , 0.21       , Length           , 'Act.b')
+    , ('minArea'           , 'Activ'                , 0.122      , Area             , 'Act.d')
+
+    # ThickGateOx 5.7 p.25  --> Unmatched
+    , ('minWidth'          , 'ThickGateOx'          , 0.86       , Length           , 'TGO.f')
+    , ('minSpacing'        , 'ThickGateOx'          , 0.86       , Length           , 'TGO.e')
+
+    # GatPoly 5.8 p.26  -->  poly
+    , ('minWidth'          , 'GatPoly'              , 0.13       , Length           , 'Gat.a1')
+    , ('minSpacing'        , 'GatPoly'              , 0.18       , Length           , 'Gat.b')
+    , ('minGateSpacing'    , 'GatPoly'              , 0.18       , Length           , 'Gat.b')
+    , ('minArea'           , 'GatPoly'              , 0.09       , Area             , 'Gat.e')
+    , ('minExtension'      , 'GatPoly' , 'Activ'    , 0.18       , Length|Asymmetric, 'Gat.c')
+    , ('minGateExtension'  , 'GatPoly' , 'Activ'    , 0.18       , Length|Asymmetric, 'Gat.c')
+    , ('minSpacing'        , 'GatPoly' , 'Activ'    , 0.07       , Length           , 'Gat.d')
+  # , ('minTransistorL'    , 'hvmosgate'            , 0.45       , Length           , 'Gat.X')
+  # , ('minTransistorW'    , 'hvmosgate'            , 0.3        , Length           , 'Gat.X')
+  # , ('minGateExtension'  , 'Activ'  , 'hvmosgate' , 0.23       , Length|Asymmetric, 'Gat.X')
+  # , ('minGateExtension'  , 'GatPoly', 'hvmosgate' , 0.18       , Length|Asymmetric, 'Gat.X')
+  # , ('minGateSpacing'    , 'hvmosgate'            , 0.25       , Length           , 'Gat.X')
+  # , ('minGateSpacing'    , 'Cont'   , 'hvmosgate' , 0.11       , Length|Asymmetric, 'Gat.X')
+  # , ('minGateExtension'  , 'Activ'  , 'lvmosgate' , 0.23       , Length|Asymmetric, 'Gat.X')
+  # , ('minGateExtension'  , 'GatPoly', 'lvmosgate' , 0.18       , Length|Asymmetric, 'Gat.X')
+  # , ('minGateSpacing'    , 'Cont'   , 'lvmosgate' , 0.11       , Length|Asymmetric, 'Gat.X')
+  # , ('minGateEnclosure'  , 'pSD', 'sg13g2_hv_pmos', (0.4, 0.4) , Length|Asymmetric, 'Gat.X')
+  # , ('minGateEnclosure'  , 'pSD', 'sg13g2_lv_pmos', (0.3, 0.3) , Length|Asymmetric, 'Gat.X')
+
+    # pSD 5.10 p.28  -->  pImplant
+    , ('minWidth'          , 'pSD'                  , 0.31       , Length           , 'pSD.a')
+    , ('minSpacing'        , 'pSD'                  , 0.31       , Length           , 'pSD.b')
+    , ('minArea'           , 'pSD'                  , 0.25       , Area             , 'pSD.k')
+    , ('minEnclosure'      , 'pSD'    , 'Activ'     , 0.18       , Length|Asymmetric, 'pSD.c')
+    , ('minSpacing'        , 'pSD'    , 'nSD'       , 0.0        , Length           , 'N/A')
+
+    # nSD 4.2 p.16  --> nImplant
+    # Note: nSD is not a real layer, it is NOT (pSD OR nSD:block) OR nSD:drawing
+    , ('minWidth'          , 'nSD'                  , 0.31       , Length           , 'pSD.a')
+    , ('minSpacing'        , 'nSD'                  , 0.31       , Length           , 'pSD.b')
+    , ('minArea'           , 'nSD'                  , 0.25       , Area             , 'pSD.k')
+    , ('minEnclosure'      , 'nSD'    , 'Activ'     , 0.18       , Length|Asymmetric, 'pSD.c')
+
+    # Cont 5.14 p.33  -->  cut0
+    , ('minWidth'          , 'Cont'                 , 0.16       , Length           , 'Cnt.a')
+    , ('maxWidth'          , 'Cont'                 , 0.16       , Length           , 'Cnt.a')
+    , ('minSpacing'        , 'Cont'                 , 0.18       , Length           , 'Cnt.b')
+    , ('minSpacing'        , 'GatPoly', 'Cont'      , 0.11       , Length           , 'Cnt.f')
+    , ('minGateSpacing'    , 'GatPoly', 'Cont'      , 0.11       , Length|Asymmetric, 'Cnt.f')
+    , ('minGateEnclosure'  , 'GatPoly', 'Cont'      ,(0.07, 0.07), Length|Asymmetric, 'Cnt.d')
+
+    # Metal1 (metal1)
+    , ('minWidth'          , 'Metal1'              , 0.16  , Length           , '')
+    , ('minSpacing'        , 'Metal1'              , 0.18  , Length           , '')
+    , ('minArea'           , 'Metal1'              , 0.09  , Area             , '')
+
+    , ('minWidth'          , 'Metal2'              , 0.2   , Length           , '')
+    , ('minSpacing'        , 'Metal2'              , 0.21  , Length           , '')
+    , ('minArea'           , 'Metal2'              , 0.144 , Area             , '')
+
+    , ('minWidth'          , 'Metal3'              , 0.2   , Length           , '')
+    , ('minSpacing'        , 'Metal3'              , 0.21  , Length           , '')
+    , ('minArea'           , 'Metal3'              , 0.144 , Area             , '')
+
+    , ('minWidth'          , 'Metal4'              , 0.2   , Length           , '')
+    , ('minSpacing'        , 'Metal4'              , 0.21  , Length           , '')
+    , ('minArea'           , 'Metal4'              , 0.144 , Area             , '')
+
+    , ('minWidth'          , 'Metal5'              , 0.2   , Length           , '')
+    , ('minSpacing'        , 'Metal5'              , 0.21  , Length           , '')
+    , ('minArea'           , 'Metal5'              , 0.144 , Area             , '')
+
+    , ('minWidth'          , 'TopMetal1'           , 1.64  , Length           , '')
+    , ('minSpacing'        , 'TopMetal1'           , 1.64  , Length           , '')
+
+    , ('minWidth'          , 'TopMetal2'           , 2.0   , Length           , '')
+    , ('minSpacing'        , 'TopMetal2'           , 2.0   , Length           , '')
+
+    , ('minEnclosure'      , 'Activ'   , 'Cont'    ,(0.07, 0.07), Length|Asymmetric, '')
+    , ('minEnclosure'      , 'GatPoly' , 'Cont'    ,(0.07, 0.07), Length|Asymmetric, '')
+    , ('minEnclosure'      , 'Metal1'  , 'Cont'    ,(0.0 , 0.08), Length|Asymmetric, '')
+    , ('minWidth'          , 'Via1'                , 0.19  , Length           , '')
+    , ('maxWidth'          , 'Via1'                , 0.19  , Length           , '')
+    , ('minSpacing'        , 'Via1'                , 0.22  , Length           , '')
+    , ('minEnclosure'      , 'Metal1'  , 'Via1'    ,(0.01 , 0.05), Length|Asymmetric, '')
+    , ('minEnclosure'      , 'Metal2'  , 'Via1'    ,(0.005, 0.05), Length|Asymmetric, '')
+    , ('minWidth'          , 'Via2'                , 0.19  , Length           , '')
+    , ('maxWidth'          , 'Via2'                , 0.19  , Length           , '')
+    , ('minSpacing'        , 'Via2'                , 0.22  , Length           , '')
+    , ('minEnclosure'      , 'Metal2'  , 'Via2'    ,(0.005, 0.05), Length|Asymmetric, '')
+    , ('minEnclosure'      , 'Metal3'  , 'Via2'    ,(0.005, 0.05), Length|Asymmetric, '')
+    , ('minWidth'          , 'Via3'                , 0.19  , Length           , '')
+    , ('maxWidth'          , 'Via3'                , 0.19  , Length           , '')
+    , ('minSpacing'        , 'Via3'                , 0.22  , Length           , '')
+    , ('minEnclosure'      , 'Metal3'  , 'Via3'    ,(0.005, 0.05), Length|Asymmetric, '')
+    , ('minEnclosure'      , 'Metal4'  , 'Via3'    ,(0.005, 0.05), Length|Asymmetric, '')
+    , ('minWidth'          , 'Via4'                , 0.19  , Length           , '')
+    , ('maxWidth'          , 'Via4'                , 0.19  , Length           , '')
+    , ('minSpacing'        , 'Via4'                , 0.22  , Length           , '')
+    , ('minEnclosure'      , 'Metal4'  , 'Via4'    ,(0.005, 0.05), Length|Asymmetric, '')
+    , ('minEnclosure'      , 'Metal5'  , 'Via4'    ,(0.005, 0.05), Length|Asymmetric, '')
+    , ('minWidth'          , 'TopVia1'             , 0.42  , Length           , '')
+    , ('maxWidth'          , 'TopVia1'             , 0.42  , Length           , '')
+    , ('minSpacing'        , 'TopVia1'             , 0.42  , Length           , '')
+    , ('minEnclosure'      , 'Metal5'   , 'TopVia1',(0.01, 0.01), Length|Asymmetric, '')
+    , ('minEnclosure'      , 'TopMetal1', 'TopVia1',(0.42, 0.42), Length|Asymmetric, '')
+    , ('minWidth'          , 'TopVia2'             , 0.9   , Length           , '')
+    , ('maxWidth'          , 'TopVia2'             , 0.9   , Length           , '')
+    , ('minSpacing'        , 'TopVia2'             , 1.06  , Length           , '')
+    , ('minEnclosure'      , 'TopMetal1', 'TopVia2',(0.5, 0.5), Length|Asymmetric, '')
+    , ('minEnclosure'      , 'TopMetal2', 'TopVia2',(0.5, 0.5), Length|Asymmetric, '')
+    , ('minWidth'          , 'Passiv'              , 40.0, Length             , '')
+    , ('minSpacing'        , 'Passiv'              , 3.5 , Length             , '')
+    , ('minEnclosure'      , 'TopMetal2', 'Passiv', (2.1, 2.1), Length|Asymmetric, '')
+    , ('minWidth'          , 'EXTBlock'            , 0.31, Length             , '')
+    , ('minSpacing'        , 'EXTBlock'            , 0.31, Length             , '')
+    , ('minWidth'          , 'SalBlock'            , 0.42, Length             , '')
+    , ('minSpacing'        , 'SalBlock'            , 0.42, Length             , '')
+  # , ('minWidth'          , 'Rppd'                , 0.5 , Length             , ''),
+  # , ('minSpacing'        , 'Rppd'                , 0.18, Length             , '')
+  # , ('minEnclosure'      , 'SalBlock', 'GatPoly' , 0.2 , Length|Asymmetric  , '')
+  # , ('minWidth'          , 'Rsil'                , 0.5              , Length, '')
+  # , ('minSpacing'        , 'Rsil'                , 0.18             , Length, '')
+  # , ('minEnclosure'      , 'RES'     , 'GatPoly' , 0.0 , Length|Asymmetric  , '')
+  # , ('minWidth'          , 'pdiode'              , 0.48, Length             , '')
+  # , ('minEnclosure'      , 'Recog.dio', 'Activ'  , (0.02, 0.02), Length|Asymmetric, '')
+  # , ('minWidth'          , 'ndiode'              , 0.48, Length             , '')
+  # , ('minEnclosure'      , 'Recog.dio', 'Activ'  , (0.02, 0.02), Length|Asymmetric, '')
+    , ('minSpacing'        , 'EXTBlock', 'pSD'     , 0.31, Length|Asymmetric  , '')
+    , ('minSpacing'        , 'Activ'   , 'ThickGateOx', 0.27, Length|Asymmetric, '')
+  # , ('minSpacing'        , 'gate:mosfet:sg13g2_lv_nmos', 'pSD', 0.3, Length|Asymmetric, '')
+  # , ('minSpacing'        , 'gate:mosfet:sg13g2_hv_nmos', 'pSD', 0.4, Length|Asymmetric, '')
+    , ('minSpacing'        , 'GatPoly' , 'EXTBlock', 0.18, Length|Asymmetric  , '')
+    , ('minSpacing'        , 'Activ'   , 'pSD'     , 0.18, Length|Asymmetric  , '')
+    , ('minSpacing'        , 'SalBlock', 'Activ'   , 0.2 , Length|Asymmetric  , '')
+    , ('minSpacing'        , 'SalBlock', 'GatPoly' , 0.2 , Length|Asymmetric  , '')
+    , ('minSpacing'        , 'SalBlock', 'Cont'    , 0.2 , Length|Asymmetric  , '')
+    , ('minSpacing'        , 'Activ'   , 'GatPoly' , 0.07, Length|Asymmetric  , '')
+    , ('minSpacing'        , 'Cont'    , 'Activ'   , 0.14, Length|Asymmetric  , '')
+   #, ('minSpacing'        , 'NWell'   , 'Activ'   , 0.24, Length|Asymmetric  , '')
+     )
 
 def _setup_techno():
     db = DataBase.create()
@@ -701,6 +745,143 @@ def _setup_techno():
 
     # Bipolars
 
+    tech.addLayerAlias(     'NWell',    'nWell' )
+    tech.addLayerAlias(     'PWell',    'pWell' )
+    tech.addLayerAlias(       'nSD', 'nImplant' )
+    tech.addLayerAlias(       'pSD', 'pImplant' )
+    tech.addLayerAlias(     'Activ',   'active' )
+    tech.addLayerAlias(   'GatPoly',     'poly' )
+    tech.addLayerAlias(      'Cont',     'cut0' )
+    tech.addLayerAlias(      'Via1',     'cut1' )
+    tech.addLayerAlias(      'Via2',     'cut2' )
+    tech.addLayerAlias(      'Via3',     'cut3' )
+    tech.addLayerAlias(      'Via4',     'cut4' )
+    tech.addLayerAlias(   'TopVia1',     'cut5' )
+    tech.addLayerAlias(   'TopVia2',     'cut6' )
+    tech.addLayerAlias(    'Metal1',   'metal1' )
+    tech.addLayerAlias(    'Metal2',   'metal2' )
+    tech.addLayerAlias(    'Metal3',   'metal3' )
+    tech.addLayerAlias(    'Metal4',   'metal4' )
+    tech.addLayerAlias(    'Metal5',   'metal5' )
+    tech.addLayerAlias( 'TopMetal1',   'metal6' )
+    tech.addLayerAlias( 'TopMetal2',   'metal7' )
+
+
+def _setup_devices ():
+    print( 'Loading devices' )
+    addDevice( name       = 'DifferentialPairBulkConnected'
+            #, spice      = spiceDir+'DiffPairBulkConnected.spi'
+             , connectors = ( 'D1', 'D2', 'G1', 'G2', 'S' )
+             , layouts    = ( ('Horizontal M2'  , 'coriolis.oroshi.DP_horizontalM2.py'    )   
+                            , ('Symmetrical'    , 'coriolis.oroshi.DP_symmetrical.py'     )   
+                            , ('Common centroid', 'coriolis.oroshi.DP_2DCommonCentroid.py')
+                            , ('Interdigitated' , 'coriolis.oroshi.DP_interdigitated.py'  )
+                            , ('WIP DP'         , 'coriolis.oroshi.wip_dp.py'             )
+                            )
+             )
+    addDevice( name       = 'DifferentialPairBulkUnconnected'
+            #, spice      = spiceDir+'DiffPairBulkUnconnected.spi'
+             , connectors = ( 'D1', 'D2', 'G1', 'G2', 'S', 'B' )
+             , layouts    = ( ('Horizontal M2'  , 'coriolis.oroshi.DP_horizontalM2.py'    )   
+                            , ('Symmetrical'    , 'coriolis.oroshi.DP_symmetrical.py'     )   
+                            , ('Common centroid', 'coriolis.oroshi.DP_2DCommonCentroid.py')
+                            , ('Interdigitated' , 'coriolis.oroshi.DP_interdigitated.py'  )
+                            , ('WIP DP'         , 'coriolis.oroshi.wip_dp.py'             )
+                            )
+             )
+    addDevice( name       = 'LevelShifterBulkUnconnected'
+            #, spice      = spiceDir+'LevelShifterBulkUnconnected.spi'
+             , connectors = ( 'D1', 'D2', 'S1', 'S2', 'B' )
+             , layouts    = ( ('Horizontal M2'  , 'coriolis.oroshi.LS_horizontalM2.py'    )   
+                            , ('Symmetrical'    , 'coriolis.oroshi.LS_symmetrical.py'     )   
+                            , ('Common centroid', 'coriolis.oroshi.LS_2DCommonCentroid.py')
+                            , ('Interdigitated' , 'coriolis.oroshi.LS_interdigitated.py'  )
+                            )
+             )
+    addDevice( name       = 'TransistorBulkConnected'
+            #, spice      = spiceDir+'TransistorBulkConnected.spi'
+             , connectors = ( 'D', 'G', 'S' )
+             , layouts    = ( ('Rotate transistor', 'coriolis.oroshi.Transistor_rotate.py')
+                            , ('Common transistor', 'coriolis.oroshi.Transistor_common.py')
+                            , ('WIP Transistor'   , 'coriolis.oroshi.wip_transistor.py'   )   
+                            )
+             )
+    addDevice( name       = 'TransistorBulkUnconnected'
+            #, spice      = spiceDir+'TransistorBulkUnconnected.spi'
+             , connectors = ( 'D', 'G', 'S', 'B' )
+             , layouts    = ( ('Rotate transistor', 'coriolis.oroshi.Transistor_rotate.py')
+                            , ('Common transistor', 'coriolis.oroshi.Transistor_common.py')
+                            , ('WIP Transistor'   , 'coriolis.oroshi.wip_transistor.py'   )
+                            )
+             )
+    addDevice( name       = 'CrossCoupledPairBulkConnected'
+            #, spice      = spiceDir+'CCPairBulkConnected.spi'
+             , connectors = ( 'D1', 'D2', 'S' )
+             , layouts    = ( ('Horizontal M2'  , 'coriolis.oroshi.CCP_horizontalM2.py'    )
+                            , ('Symmetrical'    , 'coriolis.oroshi.CCP_symmetrical.py'     )
+                            , ('Common centroid', 'coriolis.oroshi.CCP_2DCommonCentroid.py')
+                            , ('Interdigitated' , 'coriolis.oroshi.CCP_interdigitated.py'  )
+                            )
+             )
+    addDevice( name       = 'CrossCoupledPairBulkUnconnected'
+            #, spice      = spiceDir+'CCPairBulkUnconnected.spi'
+             , connectors = ( 'D1', 'D2', 'S', 'B' )
+             , layouts    = ( ('Horizontal M2'  , 'coriolis.oroshi.CCP_horizontalM2.py'    )
+                            , ('Symmetrical'    , 'coriolis.oroshi.CCP_symmetrical.py'     )
+                            , ('Common centroid', 'coriolis.oroshi.CCP_2DCommonCentroid.py')
+                            , ('Interdigitated' , 'coriolis.oroshi.CCP_interdigitated.py'  )
+                            )
+             )
+    addDevice( name       = 'CommonSourcePairBulkConnected'
+            #, spice      = spiceDir+'CommonSourcePairBulkConnected.spi'
+             , connectors = ( 'D1', 'D2', 'S', 'G' )
+             , layouts    = ( ('Horizontal M2'  , 'coriolis.oroshi.CSP_horizontalM2.py'    )
+                            , ('Symmetrical'    , 'coriolis.oroshi.CSP_symmetrical.py'     )
+                            , ('Interdigitated' , 'coriolis.oroshi.CSP_interdigitated.py'  )
+                            , ('WIP CSP'        , 'coriolis.oroshi.wip_csp.py'             )
+                            )
+             )
+    addDevice( name       = 'CommonSourcePairBulkUnconnected'
+            #, spice      = spiceDir+'CommonSourcePairBulkUnconnected.spi'
+             , connectors = ( 'D1', 'D2', 'S', 'G', 'B' )
+             , layouts    = ( ('Horizontal M2'  , 'coriolis.oroshi.CSP_horizontalM2.py'    )
+                            , ('Symmetrical'    , 'coriolis.oroshi.CSP_symmetrical.py'     )
+                            , ('Interdigitated' , 'coriolis.oroshi.CSP_interdigitated.py'  )
+                            , ('WIP CSP'        , 'coriolis.oroshi.wip_csp.py'             )
+                            )
+             )
+    addDevice( name       = 'SimpleCurrentMirrorBulkConnected'
+            #, spice      = spiceDir+'CurrMirBulkConnected.spi'
+             , connectors = ( 'D1', 'D2', 'S' )
+             , layouts    = ( ('Horizontal M2'  , 'coriolis.oroshi.SCM_horizontalM2.py'    )
+                            , ('Symmetrical'    , 'coriolis.oroshi.SCM_symmetrical.py'     )
+                            , ('Common centroid', 'coriolis.oroshi.SCM_2DCommonCentroid.py')
+                            , ('Interdigitated' , 'coriolis.oroshi.SCM_interdigitated.py'  )
+                            )
+             )
+    addDevice( name       = 'SimpleCurrentMirrorBulkUnconnected'
+            #, spice      = spiceDir+'CurrMirBulkUnconnected.spi'
+             , connectors = ( 'D1', 'D2', 'S', 'B' )
+             , layouts    = ( ('Horizontal M2'  , 'coriolis.oroshi.SCM_horizontalM2.py'    )
+                            , ('Symmetrical'    , 'coriolis.oroshi.SCM_symmetrical.py'     )
+                            , ('Common centroid', 'coriolis.oroshi.SCM_2DCommonCentroid.py')
+                            , ('Interdigitated' , 'coriolis.oroshi.SCM_interdigitated.py'  )
+                            )
+             )
+    addDevice( name       = 'MultiCapacitor'
+            #, spice      = spiceDir+'MIM_OneCapacitor.spi'
+             , connectors = ( 'T1', 'B1' )
+             , layouts    = ( ('Matrix', 'coriolis.oroshi.multicapacitor.py' ),
+                            )
+             )
+    #addDevice( name       = 'Resistor'
+    #        #, spice      = spiceDir+'MIM_OneCapacitor.spi'
+    #         , connectors = ( 'PIN1', 'PIN2' )
+    #         , layouts    = ( ('Snake', 'coriolis.oroshi.resistorsnake.py' ),
+    #                        )
+    #         )
+
+
 def _setup_display():
     # ----------------------------------------------------------------------
     # Style: Alliance.Classic [black]
@@ -731,13 +912,14 @@ def _setup_display():
     style.addDrawingStyle( group='Viewer', name='undef'         , color=toRGB('Violet'     ), border=0, pattern='2244118822441188' )
 
     # Active Layers.
-    style.addDrawingStyle(group='Active Layers', name='NWell', color=toRGB('Tan'), pattern=toHexa('urgo.8'), border=1, threshold=threshold)
-    style.addDrawingStyle(group='Active Layers', name='pSD', color=toRGB('Yellow'), pattern=toHexa('antihash0.8'), border=1, threshold=threshold)
-    style.addDrawingStyle(group='Active Layers', name='EXTBlock', color=toRGB('Yellow'), pattern=toHexa('antihash0.8'), border=1, threshold=threshold)
-    style.addDrawingStyle(group='Active Layers', name='Activ', color=toRGB('White'), pattern=toHexa('antihash0.8'), border=1, threshold=threshold)
-    style.addDrawingStyle(group='Active Layers', name='Activ.pin', color=toRGB('White'), pattern=toHexa('antihash0.8'), border=2, threshold=threshold)
-    style.addDrawingStyle(group='Active Layers', name='GatPoly', color=toRGB('Red'), pattern=toHexa('antihash0.8'), border=1, threshold=threshold)
-    style.addDrawingStyle(group='Active Layers', name='GatPoly.pin', color=toRGB('Red'), pattern=toHexa('antihash0.8'), border=2, threshold=threshold)
+    style.addDrawingStyle(group='Active Layers', name='NWell'      , color=toRGB('Tan')      , pattern=toHexa('urgo.8')     , border=1, threshold=threshold)
+    style.addDrawingStyle(group='Active Layers', name='pSD'        , color=toRGB('Yellow')   , pattern=toHexa('antihash0.8'), border=1, threshold=threshold)
+    style.addDrawingStyle(group='Active Layers', name='nSD'        , color=toRGB('LawnGreen'), pattern=toHexa('antihash0.8'), border=1, threshold=threshold)
+    style.addDrawingStyle(group='Active Layers', name='EXTBlock'   , color=toRGB('Yellow')   , pattern=toHexa('antihash0.8'), border=1, threshold=threshold)
+    style.addDrawingStyle(group='Active Layers', name='Activ'      , color=toRGB('White')    , pattern=toHexa('antihash1.8'), border=1, threshold=threshold)
+    style.addDrawingStyle(group='Active Layers', name='Activ.pin'  , color=toRGB('White')    , pattern=toHexa('antihash1.8'), border=2, threshold=threshold)
+    style.addDrawingStyle(group='Active Layers', name='GatPoly'    , color=toRGB('Red')      , pattern=toHexa('antihash0.8'), border=1, threshold=threshold)
+    style.addDrawingStyle(group='Active Layers', name='GatPoly.pin', color=toRGB('Red')      , pattern=toHexa('antihash0.8'), border=2, threshold=threshold)
 
     # Routing Layers.
     style.addDrawingStyle(group='Routing Layers', name='Metal1', color=toRGB('Blue'), pattern=toHexa('slash.8'), border=1, threshold=threshold)
@@ -841,6 +1023,7 @@ def setup():
     _setup_techno()
     _setup_display()
     loadAnalogTechno(analogTechnologyTable, __file__)
+    _setup_devices()
     try:
         from .techno_fix import fix
     except:
