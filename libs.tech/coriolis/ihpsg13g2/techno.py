@@ -205,6 +205,11 @@ def _setup_techno():
         tech, 'NWell.pin', BasicLayer.Material.nWell,
         gds2Layer=31, gds2DataType=2,
     )
+
+    createBL(
+        tech, 'PWell', BasicLayer.Material.pWell,
+        size=u(0.62), spacing=u(0.62), gds2Layer=46, gds2DataType=0,
+    )
     createBL(
         tech, 'PWell.block', BasicLayer.Material.pWell,
         size=u(0.62), spacing=u(0.62), gds2Layer=46, gds2DataType=21,

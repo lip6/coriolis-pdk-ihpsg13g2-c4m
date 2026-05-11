@@ -107,7 +107,8 @@ def setup ( checkToolkit=None ):
                            + ':' + (pdkMasterTop/'libs.ref'/'StdCellLib'/'spice').as_posix()
     Lvx.MBK_CATA_LIB  = TasYagle.MBK_CATA_LIB
     x2y.MBK_CATA_LIB  = TasYagle.MBK_CATA_LIB
-    TasYagle.MBK_SPI_MODEL = pdkMasterTop / 'spimodel.cfg'
+    ShellEnv.MBK_SPI_MODEL = pdkMasterTop / 'spimodel.cfg'
+    TasYagle.MBK_SPI_MODEL = ShellEnv.MBK_SPI_MODEL
     TasYagle.Temperature   = 25.0
     TasYagle.VddSupply     = 1.8 
     TasYagle.VddName       = 'vdd'

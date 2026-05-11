@@ -69,7 +69,7 @@ class DRC ( FlowTask ):
         if self.flags & DRC.NoRecommended: self.command += [ '--no_recommended' ]
         self.addClean( self.targets )
         self.addCleanGlob( Path.cwd(), 'drc_run_*' )
-        ShowDRC( 'showdrc', self.file_depend(0), self.file_target(0) )
+        ShowDRC( 'showdrc.'+self.file_depend(0).stem, self.file_depend(0), self.file_target(0) )
 
     def __repr__ ( self ):
         return '<{}>'.format( ' '.join(self.command) )
